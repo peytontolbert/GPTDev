@@ -1,13 +1,12 @@
-# Import necessary modules
-import os
-import json
 from agents.prompt_clarification_agent import PromptClarificationAgent
 from agents.design_generation_agent import DesignGenerationAgent
 from agents.response_parsing_agent import ResponseParsingAgent
 from agents.documentation_generation_agent import DocumentationGenerationAgent
 from agents.base_agent import Agent
+import os
+import json
 
-class DesignAgent(Agent):
+class DesignExecutionAgent(Agent):
     def __init__(self, prompt, directory):
         self.prompt = prompt
         self.directory = directory

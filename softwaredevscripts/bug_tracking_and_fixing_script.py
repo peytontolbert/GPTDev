@@ -19,6 +19,10 @@ def main(directory, prompt=None):
     fixed_code = code_generation_agent.execute(debugged_code, prompt)
     
     # Save the fixed code
+    save_fixed_code(directory, fixed_code)
+
+# Function to save the fixed code
+def save_fixed_code(directory, fixed_code):
     with open(f'{directory}/fixed_code.py', 'w') as code_file:
         code_file.write(fixed_code)
 

@@ -14,13 +14,9 @@ from utils.utils import (
     num_tokens_from_string,
     save_embedded_code,
 )
-from prompts.codeagents import (
-    code_documentation_agent,
-    code_algorithm_agent,
-    code_design_agent,
-    code_prompt_agent,
-)
 from chat.chat_with_ollama import ChatGPT
+from agents.documentation_generation_agent import DocumentationGenerationAgent
+from agents.design_generation_agent import DesignGenerationAgent
 
 # Load environmental variables and set global constants
 load_dotenv()
@@ -61,56 +57,6 @@ def extract_functions(filepath: str) -> List[Dict[str, str]]:
     return functions
 
 
-# --- Documentation Generation Functions ---
-
-
-def generate_documentation(code: str) -> str:
-    """
-    Generates documentation for a piece of code using the code_documentation_agent.
-    """
-    return ChatGPT.chat_with_ollama(code, code_documentation_agent())
-
-
-# --- Code Analysis Functions ---
-
-
-def generate_algorithm(code: str) -> str:
-    """
-    Generates an algorithm representation from code using the code_algorithm_agent.
-    """
-    return ChatGPT.chat_with_ollama(code, code_algorithm_agent())
-
-
-def generate_design(code: str) -> str:
-    """
-    Generates a design description from code using the code_design_agent.
-    """
-    return ChatGPT.chat_with_ollama(code, code_design_agent())
-
-
-# --- Prompt Generation Functions ---
-
-
-def generate_prompt_from_docs(docs_string: str) -> str:
-    """
-    Generates a prompt from documentation using the code_prompt_agent.
-    """
-    return ChatGPT.chat_with_ollama(docs_string, code_prompt_agent())
-
-
-def create_prompts_from_algorithms_and_designs(
-    algorithms: List[str], designs: List[str]
-) -> List[str]:
-    """
-    Combines algorithms and designs into individual prompts.
-    """
-    prompts = []
-    for algorithm, design in zip(algorithms, designs):
-        prompt = "Algorithm: " + algorithm + "\nDesign: " + design
-        prompts.append(prompt)
-    return prompts
-
-
 class CodebasetoPromptAgent(Agent):
     """
     An agent that converts code into prompts suitable for AI models.
@@ -126,6 +72,8 @@ class CodebasetoPromptAgent(Agent):
         """
         super().__init__()
         self.token_limit = token_limit
+        self.documentation_generation_agent = DocumentationGenerationAgent()
+        self.design_generation_agent = DesignGenerationAgent()
 
     def perform_task(self, directory):
         code_files = [
@@ -193,17 +141,17 @@ class CodebasetoPromptAgent(Agent):
 
         if tokens < self.token_limit:
             print("Tokens within limit. Generating prompt from all docs...")
-            prompt = generate_prompt_from_docs(all_docs_string)
+            prompt = self.generate_prompt_from_docs(all_docs_string)
         else:
             print("Tokens exceed limit. Generating prompts from chunked data...")
-            algorithms = [generate_algorithm(json.dumps(doc)) for doc in all_docs]
-            designs = [generate_design(json.dumps(doc)) for doc in all_docs]
-            prompts = create_prompts_from_algorithms_and_designs(algorithms, designs)
+            algorithms = [self.generate_algorithm(json.dumps(doc)) for doc in all_docs]
+            designs = [self.generate_design(json.dumps(doc)) for doc in all_docs]
+            prompts = self.create_prompts_from_algorithms_and_designs(algorithms, designs)
             prompts_string = json.dumps(prompts)
             prompts_tokens = num_tokens_from_string(prompts_string)
             if prompts_tokens < self.token_limit:
                 print("Generating prompt from algorithms and designs...")
-                prompt = generate_prompt_from_docs(prompts_string)
+                prompt = self.generate_prompt_from_docs(prompts_string)
             else:
                 print("Tokens still exceed limit. Saving chunked prompts to file...")
                 self._save_prompts_to_file(prompts, "prompts.txt")
@@ -226,7 +174,7 @@ class CodebasetoPromptAgent(Agent):
 
         if tokens < self.token_limit:
             print("Code within limit. Summarizing the entire code...")
-            doc_text = generate_documentation(code)
+            doc_text = self.documentation_generation_agent.generate_documentation_from_code(code)
             docs.append({"doc": doc_text, "code": code, "filepath": code_file})
         else:
             print("Code exceeds limit. Chunking and summarizing...")
@@ -240,13 +188,13 @@ class CodebasetoPromptAgent(Agent):
                     function_list.append(func["code"])
                     current_tokens = potential_tokens
                 else:
-                    doc = generate_documentation("\n\n".join(function_list))
+                    doc = self.documentation_generation_agent.generate_documentation_from_code("\n\n".join(function_list))
                     docs.append(doc)
                     function_list = [func["code"]]
                     current_tokens = num_tokens_from_string(func["code"])
 
             if function_list:
-                doc = generate_documentation("\n\n".join(function_list))
+                doc = self.documentation_generation_agent.generate_documentation_from_code("\n\n".join(function_list))
                 docs.append(doc)
 
         return docs
@@ -291,3 +239,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
