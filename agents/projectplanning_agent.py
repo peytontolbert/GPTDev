@@ -10,10 +10,11 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 
 """Project Planning Agent: Creates a purposeful plan for creating an entire software codebase from scratch given user natural language requirements"""
 class ProjectPlanningAgent:
-    def __init__(self, prompt: str, directory: str, model: str = "gpt-4-1106-preview"):
+    def __init__(self, prompt: str, directory: str, name: str = "project name"):
         self.prompt = prompt
         self.directory = directory
         self.gpt = ChatGPT()
+        self.name = name
 
     def clarify_prompt(self):
         while True:
@@ -56,7 +57,7 @@ class ProjectPlanningAgent:
             print("Error: 'plan' attribute is not defined.")
             return
 
-        plan_path = os.path.join(self.directory, f"{self.prompt}_plan.json")
+        plan_path = os.path.join(self.directory, f"{self.name}_plan.json")
         try:
             with open(plan_path, "w") as file:
                 json.dump(self.plan, file, indent=4)
@@ -79,8 +80,10 @@ class ProjectPlanningAgent:
             8. Next Steps\n"""
         )
         response = self.gpt.chat_with_ollama(planning_prompt)
-        self.plan = self.parse_response(response)
+        self.plan = json.loads(response)
+        #self.plan = self.parse_response(response)
         if self.plan:
+            print(response)
             print("Project plan created successfully.")
         else:
             print("Failed to create project plan.")

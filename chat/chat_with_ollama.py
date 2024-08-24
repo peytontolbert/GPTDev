@@ -114,9 +114,13 @@ class ChatGPT:
         for i in range(retries):
             try:
                 response = requests.post(url, json=payload, headers=headers)
-                response.raise_for_status()
-                return response.json()
-            except requests.exceptions.RequestException as e:
+                response.raise_for_status()  # Ensure a 4XX/5XX error raises an exception
+                response_data = response.json()  # Parse the JSON response
+                if 'response' in response_data:
+                    return response_data['response']  # Return the 'response' field
+                else:
+                    raise KeyError("'response' key not found in the API response")
+            except (requests.exceptions.RequestException, KeyError) as e:
                 if i < retries - 1:  # i is zero indexed
                     time.sleep(delay)  # wait before trying again
                 else:
