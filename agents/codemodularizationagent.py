@@ -3,7 +3,8 @@ import os
 import json
 from utils.file_utils import get_file_paths, get_file_content, write_file
 from chat.chat_with_ollama import ChatGPT
-
+"""
+Code Modularization Agent: Modularizes an entire codebase."""
 class CodeModularizationAgent:
     def __init__(self, directory, openai_api_key):
         self.directory = directory
@@ -34,11 +35,3 @@ class CodeModularizationAgent:
         user_input = input(f"Do you want to delete the original file {file_path}? (yes/no): ")
         if user_input.lower() == 'yes':
             os.remove(file_path)
-
-# Example usage
-if __name__ == "__main__":
-    directory = "/path/to/your/codebase"
-    openai_api_key = "your_openai_api_key"
-    agent = CodeModularizationAgent(directory, openai_api_key)
-    agent.traverse_and_modularize()
-

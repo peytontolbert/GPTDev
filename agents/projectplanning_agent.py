@@ -8,7 +8,7 @@ from utils.file_utils import get_file_content, get_file_paths
 # Initialize OpenAI API key
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-
+"""Project Planning Agent: Creates a purposeful plan for creating an entire software codebase from scratch given user natural language requirements"""
 class ProjectPlanningAgent:
     def __init__(self, prompt: str, directory: str, model: str = "gpt-4-1106-preview"):
         self.prompt = prompt

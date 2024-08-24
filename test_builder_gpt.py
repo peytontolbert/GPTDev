@@ -1,11 +1,11 @@
-from start_largecode import CodebaseGenerator
+from agents.codebasegen_agent import GenerateCodebaseAgent
 
 # Define a sample prompt and directory for testing
 sample_prompt = "Create a simple Python script that prints 'Hello, World!'"
 test_directory = "./test_codebase"
 
 # Instantiate the CodebaseGenerator class
-generator = CodebaseGenerator(sample_prompt, test_directory)
+generator = GenerateCodebaseAgent(sample_prompt, test_directory)
 
 # Design the program structure
 program_structure = generator.design_program_structure()

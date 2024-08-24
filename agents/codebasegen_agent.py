@@ -26,20 +26,30 @@ from src.db import DB, DBs
 import numpy as np
 import traceback
 from dotenv import load_dotenv
-
+from agents.base_agent import Agent
 # Initialize OpenAI and GitHub API keys
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 tokenLimit = 50000
 DEFAULT_MODEL = "gpt-4-1106-preview"  # Set your default model here
-
+"""
+Codebase Generation Agent: Generates an entire codebase from a prompt.
+"""
 
 # ---  GenerateCodebaseAgent class ---
-class GenerateCodebaseAgent:
+class GenerateCodebaseAgent(Agent):
     def __init__(self, prompt, directory, model=DEFAULT_MODEL):
         self.prompt = prompt
         self.directory = directory
         self.gpt = ChatGPT()
+
+    def execute(self, input_data):
+        # Implement the main logic here
+        pass
+
+    def generate_prompt(self, input_data):
+        # Implement prompt generation logic here
+        pass
 
     def clarify_prompt(self):
         while True:

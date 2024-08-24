@@ -12,8 +12,10 @@ import tempfile
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-
-class EditCodebaseAgent:
+"""
+Codebase Modification Agent: Correctly modifies a codebase given a specific prompt.
+"""
+class CodebaseModificationAgent(Agent):
     def __init__(self, prompt: str, directory: str, model: str = "gpt-4-1106-preview"):
         """
         Initialize the EditCodebaseAgent with the given prompt, directory, and model.
@@ -23,9 +25,20 @@ class EditCodebaseAgent:
             directory (str): The directory of the codebase to be edited.
             model (str): The model to be used for generating edits. Default is "gpt-4-1106-preview".
         """
+        super().__init__()
         self.prompt = prompt
         self.directory = directory
         self.gpt = ChatGPT()
+
+    def perform_task(self, input_data):
+        self.clarify_prompt()
+        self.generate_readme_and_docs()
+        self.edit_codebase()
+        self.test_integrations()
+
+    def generate_prompt(self, input_data):
+        # Implement codebase editing logic here
+        pass
 
     def edit_and_test_codebase(self):
         """
@@ -210,12 +223,3 @@ class EditCodebaseAgent:
         os.system("pytest")
 
 
-# Example usage
-if __name__ == "__main__":
-    prompt = "Refactor the code to improve readability and performance."
-    directory = "./path/to/codebase"
-    agent = EditCodebaseAgent(prompt, directory)
-    agent.clarify_prompt()
-    agent.generate_readme_and_docs()
-    agent.edit_codebase()
-    agent.test_integrations()

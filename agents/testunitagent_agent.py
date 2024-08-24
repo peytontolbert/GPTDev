@@ -4,11 +4,22 @@ import json
 from utils.file_utils import write_file, get_file_content, get_file_paths
 from chat.chat_with_ollama import ChatGPT
 
+"""
+Test Unit Agent: traverses a given repo and generates test units for the entire codebase.
+"""
 
 class TestUnitAgent:
     def __init__(self, directory):
         self.directory = directory
         self.gpt = ChatGPT()
+
+    def perform_task(self, input_data):
+        # Implement test unit logic here
+        pass
+
+    def generate_prompt(self, input_data):
+        # Implement test unit logic here
+        pass
 
     def generate_tests(self):
         file_paths = get_file_paths(self.directory, extensions=[".py"])

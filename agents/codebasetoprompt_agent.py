@@ -7,20 +7,20 @@ from typing import List, Dict, Any
 from dotenv import load_dotenv
 from openai.embeddings_utils import get_embedding
 
-from workspace.ai_coder.utils.utils import (
+from utils.utils import (
     get_file_content,
     get_function_name,
     get_until_no_space,
     num_tokens_from_string,
     save_embedded_code,
 )
-from workspace.ai_coder.agents.codeagents import (
+from prompts.codeagents import (
     code_documentation_agent,
     code_algorithm_agent,
     code_design_agent,
     code_prompt_agent,
 )
-from workspace.ai_coder.main.gptfunctions import ChatGPTAgent
+from chat.chat_with_ollama import ChatGPT
 
 # Load environmental variables and set global constants
 load_dotenv()
@@ -36,6 +36,9 @@ if not OPENAI_API_KEY:
 
 openai.api_key = OPENAI_API_KEY
 
+"""
+Codebase To Prompt Agent: Traverses a codebase to generate a specific prompt to get an autonomous GPT agent to code the entire repo.
+"""
 
 # --- Code Processing Functions ---
 
@@ -65,7 +68,7 @@ def generate_documentation(code: str) -> str:
     """
     Generates documentation for a piece of code using the code_documentation_agent.
     """
-    return ChatGPTAgent.chat_with_gpt3(code, code_documentation_agent())
+    return ChatGPT.chat_with_ollama(code, code_documentation_agent())
 
 
 # --- Code Analysis Functions ---
@@ -75,14 +78,14 @@ def generate_algorithm(code: str) -> str:
     """
     Generates an algorithm representation from code using the code_algorithm_agent.
     """
-    return ChatGPTAgent.chat_with_gpt3(code, code_algorithm_agent())
+    return ChatGPT.chat_with_ollama(code, code_algorithm_agent())
 
 
 def generate_design(code: str) -> str:
     """
     Generates a design description from code using the code_design_agent.
     """
-    return ChatGPTAgent.chat_with_gpt3(code, code_design_agent())
+    return ChatGPT.chat_with_ollama(code, code_design_agent())
 
 
 # --- Prompt Generation Functions ---
@@ -92,7 +95,7 @@ def generate_prompt_from_docs(docs_string: str) -> str:
     """
     Generates a prompt from documentation using the code_prompt_agent.
     """
-    return ChatGPTAgent.chat_with_gpt3(docs_string, code_prompt_agent())
+    return ChatGPT.chat_with_ollama(docs_string, code_prompt_agent())
 
 
 def create_prompts_from_algorithms_and_designs(
@@ -108,7 +111,7 @@ def create_prompts_from_algorithms_and_designs(
     return prompts
 
 
-class GeneratePromptAgent:
+class CodebasetoPromptAgent(Agent):
     """
     An agent that converts code into prompts suitable for AI models.
     """
@@ -121,9 +124,34 @@ class GeneratePromptAgent:
             token_limit (int):
                     token_limit (int): The maximum number of tokens to process.
         """
+        super().__init__()
         self.token_limit = token_limit
 
-    def generate_prompts(self, code_files: List[str], clone_dir: str) -> None:
+    def perform_task(self, directory):
+        code_files = [
+            y
+            for x in os.walk(directory)
+            for ext in (
+                "*.py",
+                "*.js",
+                "*.cpp",
+                "*.rs",
+                "*.md",
+                "*.txt",
+                "*.html",
+            )
+            for y in glob(os.path.join(x[0], ext))
+        ]
+        if not code_files:
+            print("No code files found in the specified directory.")
+            return
+        self.generate_prompts_for_files(code_files, directory)
+        pass
+
+    def generate_prompt(self, input_data):
+        # Implement codebase to prompt logic here
+        pass
+    def generate_prompts_for_files(self, code_files: List[str], clone_dir: str) -> None:
         """
         Generates prompts from code files and saves them to a file.
 
@@ -257,8 +285,8 @@ def main():
     if not code_files:
         print("No code files found in the specified directory.")
         return
-    converter = CodeToPromptAgent(tokenLimit)
-    converter.generate_prompts(code_files, CLONE_DIR)
+    converter = CodebasetoPromptAgent(tokenLimit)
+    converter.generate_prompts_for_files(code_files, CLONE_DIR)
 
 
 if __name__ == "__main__":
