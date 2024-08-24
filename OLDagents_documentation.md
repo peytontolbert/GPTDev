@@ -121,15 +121,34 @@ Generates a summary of the program's architecture, including the purpose of each
 
 ##### `update_documentation(self, shared_dependencies, filepaths)`
 **Description**: 
-Generates detailed documentation for the codebase, including shared dependencies and file paths. The documentation is written to the `DOCUMENTATION.md` file.
+Generates a detailed documentation file in the specified directory. The documentation includes shared dependencies and file paths.
 
 **Parameters**:
-- `shared_dependencies`: A dictionary of shared dependencies among the codebase.
-- `filepaths`: A list of file paths in the codebase.
+- `shared_dependencies`: A dictionary representing shared dependencies among the files.
+- `filepaths`: A list of file paths to be documented.
 
 ---
 
-##### `generate_codebase_agent(filepaths_string, shared_dependencies)`
+##### `generate_codebase(self)`
+**Description**: 
+Generates the codebase based on the clarified prompt. This method interacts with the GPT model to generate code for each file path and writes the generated code to the specified directory.
+
+**Parameters**:
+- `clarified_prompt`: A JSON string of the clarified prompt.
+
+---
+
+##### `write_code_to_directory(self, path, content)`
+**Description**: 
+Writes the provided content to the specified file path.
+
+**Parameters**:
+- `path`: The file path where the content is to be written.
+- `content`: The content to be written.
+
+---
+
+##### `generate_code_agent(filepaths_string, shared_dependencies)`
 **Description**: 
 Returns a prompt for an AI developer who generates code based on user intent. The AI writes valid code for the given file paths and shared dependencies, returning only the code without any additional explanation.
 
@@ -266,4 +285,5 @@ A list of relevant portions of the code to be modified.
 Runs tests to ensure the changes do not break the codebase. This method runs the test suite using pytest to verify that the changes made to the codebase do not introduce any new issues or break existing functionality.
 
 ---
+
 
