@@ -8,6 +8,7 @@ from datetime import datetime
 from typing import List, Dict, Any, Union, Tuple
 import unittest
 import git
+import docker
 
 class AgentDependencyGraph:
     def __init__(self):
@@ -83,8 +84,10 @@ class BuilderGPT(Agent):
     def execute(self, input_data):
         requirements = self.process_natural_language_requirements(input_data)
         optimized_agents = self.recursive_agent_optimization(os.listdir(self.directory))
-        selected_agents = self.dynamic_selection(optimized_agents)
-        results = self.run_selected_agents(selected_agents, input_data)
+        selected_agents = self.dynamic_selection(optimized_agents, requirements)
+        results = self.run_selected_agents(selected_agents, requirements)
+        self.evaluate_and_improve(selected_agents, results)
+        self.deploy_agents(selected_agents)
         return results
 
 

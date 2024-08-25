@@ -1,0 +1,52 @@
+2024-08-24 23:34:51,177 - INFO - Note: NumExpr detected 16 cores but "NUMEXPR_MAX_THREADS" not set, so enforcing safe limit of 8.
+2024-08-24 23:34:51,177 - INFO - NumExpr defaulting to 8 threads.
+2024-08-24 23:34:53,602 - INFO - Starting iteration 1
+2024-08-24 23:34:53,602 - ERROR - Error in iteration 1: 'super' object has no attribute '_get_gpt_improvements'
+2024-08-24 23:36:19,242 - INFO - Note: NumExpr detected 16 cores but "NUMEXPR_MAX_THREADS" not set, so enforcing safe limit of 8.
+2024-08-24 23:36:19,242 - INFO - NumExpr defaulting to 8 threads.
+2024-08-24 23:36:21,642 - INFO - Starting iteration 1
+2024-08-24 23:36:21,642 - ERROR - Error in iteration 1: 'super' object has no attribute '_get_gpt_improvements'
+2024-08-24 23:37:49,217 - INFO - Note: NumExpr detected 16 cores but "NUMEXPR_MAX_THREADS" not set, so enforcing safe limit of 8.
+2024-08-24 23:37:49,217 - INFO - NumExpr defaulting to 8 threads.
+2024-08-24 23:37:51,650 - INFO - Starting iteration 1
+2024-08-24 23:37:51,650 - ERROR - Error in iteration 1: 'super' object has no attribute '_get_gpt_improvements'
+2024-08-24 23:39:57,970 - INFO - Note: NumExpr detected 16 cores but "NUMEXPR_MAX_THREADS" not set, so enforcing safe limit of 8.
+2024-08-24 23:39:57,970 - INFO - NumExpr defaulting to 8 threads.
+2024-08-24 23:40:00,341 - INFO - Starting iteration 1
+2024-08-24 23:40:17,099 - INFO - No further improvements suggested. Stopping.
+2024-08-24 23:42:10,728 - INFO - Note: NumExpr detected 16 cores but "NUMEXPR_MAX_THREADS" not set, so enforcing safe limit of 8.
+2024-08-24 23:42:10,728 - INFO - NumExpr defaulting to 8 threads.
+2024-08-24 23:42:13,198 - INFO - Starting iteration 1
+2024-08-24 23:42:24,512 - INFO - No further improvements suggested. Stopping.
+2024-08-24 23:49:50,019 - INFO - Note: NumExpr detected 16 cores but "NUMEXPR_MAX_THREADS" not set, so enforcing safe limit of 8.
+2024-08-24 23:49:50,019 - INFO - NumExpr defaulting to 8 threads.
+2024-08-24 23:49:52,404 - INFO - Starting iteration 1
+2024-08-24 23:50:10,439 - WARNING - No valid improvements suggested by GPT. Trying meta-prompt.
+2024-08-24 23:50:19,328 - INFO - No further improvements suggested. Stopping.
+2024-08-24 23:57:04,896 - INFO - Note: NumExpr detected 16 cores but "NUMEXPR_MAX_THREADS" not set, so enforcing safe limit of 8.
+2024-08-24 23:57:04,897 - INFO - NumExpr defaulting to 8 threads.
+2024-08-24 23:57:08,512 - INFO - Starting iteration 1
+2024-08-24 23:57:23,917 - WARNING - No valid improvements suggested by GPT. Trying meta-prompt.
+2024-08-24 23:57:32,356 - INFO - No further improvements suggested. Stopping.
+2024-08-25 00:02:34,935 - INFO - Note: NumExpr detected 16 cores but "NUMEXPR_MAX_THREADS" not set, so enforcing safe limit of 8.
+2024-08-25 00:02:34,935 - INFO - NumExpr defaulting to 8 threads.
+2024-08-25 00:02:37,540 - INFO - Starting iteration 1
+2024-08-25 00:02:52,129 - WARNING - No valid improvements suggested by GPT. Trying meta-prompt.
+2024-08-25 00:02:59,813 - INFO - No further improvements suggested. Stopping.
+2024-08-25 00:06:15,505 - INFO - Note: NumExpr detected 16 cores but "NUMEXPR_MAX_THREADS" not set, so enforcing safe limit of 8.
+2024-08-25 00:06:15,505 - INFO - NumExpr defaulting to 8 threads.
+2024-08-25 00:06:17,928 - INFO - Starting iteration 1
+2024-08-25 00:06:22,235 - WARNING - No valid improvements suggested by GPT. Trying meta-prompt.
+2024-08-25 00:06:27,840 - INFO - No further improvements suggested. Stopping.
+2024-08-25 00:07:22,245 - INFO - Note: NumExpr detected 16 cores but "NUMEXPR_MAX_THREADS" not set, so enforcing safe limit of 8.
+2024-08-25 00:07:22,245 - INFO - NumExpr defaulting to 8 threads.
+2024-08-25 00:07:24,707 - INFO - Starting iteration 1
+2024-08-25 00:07:29,504 - WARNING - No valid improvements suggested by GPT. Trying meta-prompt.
+2024-08-25 00:07:40,023 - INFO - No further improvements suggested. Stopping.
+2024-08-25 00:07:44,523 - ERROR - Error: GPT response is not a valid number. Assuming default quality score of 0.5.
+2024-08-25 00:10:07,178 - INFO - Note: NumExpr detected 16 cores but "NUMEXPR_MAX_THREADS" not set, so enforcing safe limit of 8.
+2024-08-25 00:10:07,178 - INFO - NumExpr defaulting to 8 threads.
+2024-08-25 00:10:09,579 - INFO - Starting iteration 1
+2024-08-25 00:10:14,108 - WARNING - No valid improvements suggested by GPT. Trying meta-prompt.
+2024-08-25 00:10:27,199 - INFO - No further improvements suggested. Stopping.
+2024-08-25 00:10:35,676 - ERROR - Error: GPT response is not a valid number. Assuming default quality score of 0.5.
