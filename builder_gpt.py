@@ -113,7 +113,7 @@ class BuilderGPT(Agent):
     def execute(self, input_data):
         tasks = ['task_decomposition', 'knowledge_retrieval', 'code_review', 'meta_learning', 'exploration_strategy']
         results = self.task_manager_agent.execute_tasks(tasks, input_data)
-        self.evaluate_and_improve(results.keys(), results.values())
+        self.evaluate_and_improve(results.keys(), results.values(), input_data)
 
         for agent in results.keys():
             self.deployment_agent.execute(agent)
@@ -193,12 +193,12 @@ class BuilderGPT(Agent):
         
         return results
 
-    def evaluate_and_improve(self, agents: List[str], results: List[Any]) -> None:
+    def evaluate_and_improve(self, agents: List[str], results: List[Any], original_input) -> None:
         for agent, result in zip(agents, results):
-            input_data = {"agent_name": agent, "result": result}
+            input_data = {"agent_name": agent, "result": result, "original_input": original_input}
             performance_score = self.performance_evaluation_agent.execute(input_data)
             self.performance_metrics[agent] = performance_score
-
+            print(performance_score)
             if performance_score < 0.7:  # Threshold for improvement
                 self.agent_improvement_agent.improve_agent(agent)
         
