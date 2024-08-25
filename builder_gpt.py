@@ -7,6 +7,14 @@ from agents.knowledge_retrieval_agent import KnowledgeRetrievalAgent  # Import t
 from agents.code_review_agent import CodeReviewAgent  # Import the new agent
 from agents.meta_learning_agent import MetaLearningAgent  # Import the new agent
 from agents.exploration_strategy_agent import ExplorationStrategyAgent  # Import the new agent
+from agents.performance_evaluation_agent import PerformanceEvaluationAgent  # Import the new agent
+from agents.agent_improvement_agent import AgentImprovementAgent  # Import the new agent
+from agents.testing_agent import TestingAgent  # Import the new agent
+from agents.deployment_agent import DeploymentAgent  # Import the new agent
+from agents.strategy_evaluation_agent import StrategyEvaluationAgent  # Import the new agent
+from agents.agent_update_manager_agent import AgentUpdateManager # Import the new agent
+from agents.dependency_management_agent import DependencyManagementAgent # Import the new agent
+from agents.task_manager_agent import TaskManagerAgent # Import the new agent
 
 
 from agents.base_agent import Agent
@@ -93,6 +101,27 @@ class BuilderGPT(Agent):
         self.code_review_agent = CodeReviewAgent(name="CodeReviewAgent")  # Instantiate the agent
         self.meta_learning_agent = MetaLearningAgent(name="MetaLearningAgent")  # Instantiate the agent
         self.exploration_strategy_agent = ExplorationStrategyAgent(name="ExplorationStrategyAgent")  # Instantiate the agent
+        self.performance_evaluation_agent = PerformanceEvaluationAgent(name="PerformanceEvaluationAgent")
+        self.agent_improvement_agent = AgentImprovementAgent(name="AgentImprovementAgent")
+        self.testing_agent = TestingAgent(name="TestingAgent")
+        self.deployment_agent = DeploymentAgent(name="DeploymentAgent", directory=directory)
+        self.strategy_evaluation_agent = StrategyEvaluationAgent(name="StrategyEvaluationAgent")
+        self.agent_update_manager = AgentUpdateManager(name="AgentUpdateManager", directory=directory, version_control=self.version_control)
+        self.dependency_manager_agent = DependencyManagementAgent(name="DependencyManagerAgent")
+
+        # Task Manager Agent
+        self.task_manager_agent = TaskManagerAgent(name="TaskManagerAgent", agents={
+            'task_decomposition': self.task_decomposition_agent,
+            'knowledge_retrieval': self.knowledge_retrieval_agent,
+            'code_review': self.code_review_agent,
+            'meta_learning': self.meta_learning_agent,
+            'exploration_strategy': self.exploration_strategy_agent,
+            'performance_evaluation': self.performance_evaluation_agent,
+            'agent_improvement': self.agent_improvement_agent,
+            'testing': self.testing_agent,
+            'deployment': self.deployment_agent,
+            'strategy_evaluation': self.strategy_evaluation_agent,
+        })
 
         # Initialize Docker client if Docker is available
         try:
@@ -103,12 +132,9 @@ class BuilderGPT(Agent):
             self.docker_client = None
 
     def execute(self, input_data):
-        requirements = self.process_natural_language_requirements(input_data)
-        optimized_agents = self.recursive_agent_optimization(os.listdir(self.directory))
-        selected_agents = self.dynamic_selection(optimized_agents, requirements)
-        results = self.run_selected_agents(selected_agents, requirements)
-        self.evaluate_and_improve(selected_agents, results)
-        self.deploy_agents(selected_agents)
+        tasks = ['task_decomposition', 'knowledge_retrieval', 'code_review', 'meta_learning', 'exploration_strategy']
+        results = self.task_manager_agent.execute_tasks(tasks, input_data)
+        self.evaluate_and_improve(results.key(), results.values())
         return results
 
     def process_natural_language_requirements(self, input_data: str) -> Dict[str, Any]:
@@ -142,7 +168,7 @@ class BuilderGPT(Agent):
                 
                 # Update dependencies
                 for dep in dependencies:
-                    self.dependency_graph.add_dependency(agent_name, dep)
+                    self.dependency_manager_agent.add_dependency(agent_name, dep)
                 
                 # Recursively optimize new agents
                 sub_optimized = self.recursive_agent_optimization(new_agents, depth + 1, max_depth)
@@ -308,7 +334,13 @@ class BuilderGPT(Agent):
             agent_instance = getattr(agent_module, 'AgentClass')()
             result = agent_instance.execute(requirements)
             results.append(result)
-            self.run_tests(agent)
+            # Run tests and handle any failures using TestingAgent
+            agent_code = self.load_agent_code(f"{agent}.py")
+            fixed_code = self.testing_agent.execute(agent, agent_code)
+            if fixed_code and fixed_code != agent_code:
+                self.save_agent_code(f"{agent}.py", fixed_code)
+                self.version_control.add_version(agent, fixed_code, "Test failure fixes")
+        
         return results
 
 
@@ -330,7 +362,7 @@ class BuilderGPT(Agent):
         highest_score = -1
 
         for strategy in strategies:
-            score = self.evaluate_strategy(strategy)
+            score = self.strategy_evaluation_agent.execute(strategy)
             if score > highest_score:
                 highest_score = score
                 best_strategy = strategy
@@ -364,36 +396,9 @@ class BuilderGPT(Agent):
 
     def improve_agent(self, agent: str) -> None:
         agent_code = self.load_agent_code(f"{agent}.py")
-        improvement_prompt = (
-            f"The following agent has underperformed:\n{agent}\n\n"
-            f"Current implementation:\n{agent_code}\n\n"
-            "Suggest improvements to enhance its performance."
-        )
-        improved_code = self.gpt.chat_with_ollama(improvement_prompt, self.prompt)
-        self.save_agent_code(f"{agent}.py", improved_code)
-        self.version_control.add_version(agent, improved_code, "Performance improvement")
-
-    def run_tests(self, agent: str) -> None:
-        test_suite = unittest.TestLoader().discover(f'tests/{agent}')
-        test_result = unittest.TextTestRunner().run(test_suite)
-        if not test_result.wasSuccessful():
-            self.handle_test_failure(agent, test_result)
-
-    def handle_test_failure(self, agent: str, test_result: unittest.TestResult) -> None:
-        failed_tests = [str(error[0]) for error in test_result.errors + test_result.failures]
-        fix_prompt = (
-            f"The following tests failed for agent {agent}:\n{failed_tests}\n\n"
-            f"Current implementation:\n{self.load_agent_code(f'{agent}.py')}\n\n"
-            "Provide fixes to make the tests pass."
-        )
-        fixed_code = self.gpt.chat_with_ollama(fix_prompt, self.prompt)
-        self.save_agent_code(f"{agent}.py", fixed_code)
-        self.version_control.add_version(agent, fixed_code, "Test failure fixes")
-
-    def deploy_agents(self, agents: List[str]) -> None:
-        for agent in agents:
-            self.build_docker_image(agent)
-            self.push_to_repository(agent)
+        input_data = {"agent": agent, "agent_code": agent_code}
+        improved_code = self.agent_improvement_agent.execute(input_data)
+        self.agent_update_manager.update_agent(agent, improved_code, "Performance improvement")
 
     def build_docker_image(self, agent: str) -> None:
         dockerfile_content = self.generate_dockerfile(agent)

@@ -1,6 +1,7 @@
 import time
 import psutil
 from agents.base_agent import Agent
+import json
 
 class PerformanceMonitoringAgent(Agent):
     def __init__(self, name):

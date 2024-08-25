@@ -7,8 +7,7 @@ class CodeReviewAgent(Agent):
 
     def execute(self, input_data):
         prompt = self.generate_prompt(input_data)
-        detailed_prompt = self.clarify_prompt(prompt)
-        response = self.gpt.chat_with_ollama(detailed_prompt, self.name)
+        response = self.gpt.chat_with_ollama(prompt, self.name)
         return self.parse_response(response)
 
     def generate_prompt(self, input_data):

@@ -12,18 +12,6 @@ class Agent:
     def generate_prompt(self, input_data):
         raise NotImplementedError("Each agent must implement the generate_prompt method.")
 
-    def clarify_prompt(self, prompt):
-        clarifying_prompt = (
-            'Is anything unclear? If yes, only answer in the form:\n'
-            '{remaining unclear areas} remaining questions. \n'
-            '{Next question}\n'
-            'If everything is sufficiently clear, only answer "no".'
-        )
-        clarifying_questions = self.gpt.chat_with_ollama(clarifying_prompt, prompt)
-        if "no" in clarifying_questions.lower():
-            return prompt
-        return prompt + clarifying_questions + "\n"
-
     def parse_response(self, response):
         try:
             return json.loads(response)
