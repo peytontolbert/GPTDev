@@ -1,4 +1,4 @@
-from agents.codecoverage_agent import CodeCoverageAgent
+from agents.analysis.analysis.codecoverage_agent import CodeCoverageAgent
 
 # Initialize agent
 code_coverage_agent = CodeCoverageAgent('CodeCoverageAgent')

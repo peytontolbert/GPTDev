@@ -1,4 +1,4 @@
-from agents.buildautomation_agent import BuildAutomationAgent
+from agents.analysis.analysis.buildautomation_agent import BuildAutomationAgent
 
 project_path = "./path_to_project"
 

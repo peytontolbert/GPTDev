@@ -117,7 +117,7 @@ class ChatGPT:
                 response = requests.post(url, json=payload, headers=headers)
                 response.raise_for_status()  # Ensure a 4XX/5XX error raises an exception
                 response_data = response.json()  # Parse the JSON response
-                print(f"response data: {response_data}")
+                print(f"response data: {response_data['response']}")
                 if 'response' in response_data:
                     return response_data['response']  # Return the 'response' field
                 else:

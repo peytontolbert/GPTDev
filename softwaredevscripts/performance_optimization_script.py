@@ -1,4 +1,4 @@
-from agents.performanceoptimization_agent import PerformanceOptimizationAgent
+from agents.analysis.analysis.performanceoptimization_agent import PerformanceOptimizationAgent
 
 project_path = "./path_to_project"
 

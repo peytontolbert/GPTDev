@@ -33,9 +33,9 @@ To orchestrate agents together for automated software development, follow these 
 
     ```python
     # softwaredevscripts/automate_development.py
-    from agents.code_analysis_agent import CodeAnalyzer
-    from agents.testing_agent import TestRunner
-    from agents.documentation_generation_agent import DocGenerator
+    from agents.analysis.code_analysis_agent import CodeAnalyzer
+    from agents.analysis.testing_agent import TestRunner
+    from agents.analysis.documentation_generation_agent import DocGenerator
 
     def automate_development():
         # Step 1: Analyze the code
@@ -67,11 +67,11 @@ To orchestrate agents together for automated software development, follow these 
 
     ```python
     # softwaredevscripts/complex_automation.py
-    from agents.projectplanning_agent import ProjectPlanner
-    from agents.orchestration_agent import OrchestrationAgent
-    from agents.code_generation_agent import CodeGenerator
-    from agents.testing_agent import TestRunner
-    from agents.documentation_generation_agent import DocGenerator
+    from agents.analysis.projectplanning_agent import ProjectPlanner
+    from agents.analysis.orchestration_agent import OrchestrationAgent
+    from agents.analysis.code_generation_agent import CodeGenerator
+    from agents.analysis.testing_agent import TestRunner
+    from agents.analysis.documentation_generation_agent import DocGenerator
 
     def complex_automation():
         # Step 1: Plan the project
@@ -103,14 +103,14 @@ To orchestrate agents together for automated software development, follow these 
 
     ```python
     # softwaredevscripts/advanced_automation.py
-    from agents.projectplanning_agent import ProjectPlanner
-    from agents.orchestration_agent import OrchestrationAgent
-    from agents.code_generation_agent import CodeGenerator
-    from agents.testing_agent import TestRunner
-    from agents.documentation_generation_agent import DocGenerator
-    from agents.error_handling_agent import ErrorHandler
-    from agents.performance_monitoring_agent import PerformanceMonitor
-    from agents.security_analysis_agent import SecurityAnalyzer
+    from agents.analysis.projectplanning_agent import ProjectPlanner
+    from agents.analysis.orchestration_agent import OrchestrationAgent
+    from agents.analysis.code_generation_agent import CodeGenerator
+    from agents.analysis.testing_agent import TestRunner
+    from agents.analysis.documentation_generation_agent import DocGenerator
+    from agents.analysis.error_handling_agent import ErrorHandler
+    from agents.analysis.performance_monitoring_agent import PerformanceMonitor
+    from agents.analysis.security_analysis_agent import SecurityAnalyzer
 
     def advanced_automation():
         # Step 1: Plan the project

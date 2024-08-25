@@ -1,4 +1,4 @@
-from agents.deployment_agent import DeploymentAgent
+from agents.analysis.analysis.deployment_agent import DeploymentAgent
 
 project_path = "./path_to_project"
 

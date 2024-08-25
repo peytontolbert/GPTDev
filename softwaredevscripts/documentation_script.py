@@ -1,4 +1,4 @@
-from agents.documentation_agent import DocumentationAgent
+from agents.analysis.analysis.documentation_agent import DocumentationAgent
 
 project_path = "./path_to_project"
 

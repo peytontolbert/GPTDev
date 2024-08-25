@@ -1,4 +1,4 @@
-from agents.codequality_agent import CodeQualityAgent
+from agents.analysis.analysis.codequality_agent import CodeQualityAgent
 
 # Initialize agent
 code_quality_agent = CodeQualityAgent('CodeQualityAgent')

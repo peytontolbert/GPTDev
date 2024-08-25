@@ -1,4 +1,4 @@
-from agents.codereview_agent import CodeReviewAgent
+from agents.analysis.analysis.codereview_agent import CodeReviewAgent
 
 project_path = "./path_to_project"
 

@@ -1,4 +1,4 @@
-from agents.securityaudit_agent import SecurityAuditAgent
+from agents.analysis.analysis.securityaudit_agent import SecurityAuditAgent
 
 project_path = "./path_to_project"
 

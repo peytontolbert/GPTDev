@@ -1,7 +1,7 @@
 import time
 import json
 from builder_gpt import BuilderGPT
-from agents.task_manager_agent import TaskManagerAgent
+from agents.management.task_manager_agent import TaskManagerAgent
 
 class MetaScript:
     def __init__(self, builder_gpt):
@@ -60,7 +60,7 @@ if __name__ == "__main__":
     builder_gpt = BuilderGPT(
         name="BuilderGPT",
         prompt="Improve and develop software engineering related agents.",
-        directory="/path/to/your/directory"
+        directory="agents"
     )
 
     # Initialize and run the MetaScript

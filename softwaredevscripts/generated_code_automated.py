@@ -1,8 +1,8 @@
-from agents.task_planning_agent import TaskPlanningAgent
-from agents.orchestration_agent import OrchestrationAgent
-from agents.inter_agent_communication_agent import InterAgentCommunicationAgent
-from agents.code_generation_agent import CodeGenerationAgent
-from agents.testing_agent import TestingAgent
+from agents.analysis.analysis.task_planning_agent import TaskPlanningAgent
+from agents.analysis.analysis.orchestration_agent import OrchestrationAgent
+from agents.analysis.analysis.inter_agent_communication_agent import InterAgentCommunicationAgent
+from agents.analysis.analysis.code_generation_agent import CodeGenerationAgent
+from agents.analysis.analysis.testing_agent import TestingAgent
 from workspace.agents.documentation_generation_agent import DocumentationGenerationAgent
 
 # Initialize agents

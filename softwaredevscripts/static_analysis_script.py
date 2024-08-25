@@ -1,4 +1,4 @@
-from agents.staticanalysis_agent import StaticAnalysisAgent
+from agents.analysis.analysis.staticanalysis_agent import StaticAnalysisAgent
 
 project_path = "./path_to_project"
 

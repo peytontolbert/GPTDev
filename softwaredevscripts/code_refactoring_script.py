@@ -1,4 +1,4 @@
-from agents.coderefactoring_agent import CodeRefactoringAgent
+from agents.analysis.analysis.coderefactoring_agent import CodeRefactoringAgent
 
 # Initialize agent
 code_refactoring_agent = CodeRefactoringAgent('CodeRefactoringAgent')

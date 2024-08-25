@@ -1,4 +1,4 @@
-from agents.unittestcreation_agent import UnitTestCreationAgent
+from agents.analysis.analysis.unittestcreation_agent import UnitTestCreationAgent
 
 project_path = "./path_to_project"
 

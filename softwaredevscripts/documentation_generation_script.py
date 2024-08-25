@@ -1,4 +1,4 @@
-from agents.documentationgeneration_agent import DocumentationGenerationAgent
+from agents.analysis.analysis.documentationgeneration_agent import DocumentationGenerationAgent
 
 # Initialize agent
 documentation_generation_agent = DocumentationGenerationAgent('DocumentationGenerationAgent')

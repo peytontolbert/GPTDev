@@ -1,4 +1,4 @@
-from agents.logging_agent import LoggingAgent
+from agents.analysis.analysis.logging_agent import LoggingAgent
 
 project_path = "./path_to_project"
 

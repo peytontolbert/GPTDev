@@ -1,5 +1,5 @@
-from agents.codebasemodification_agent import CodebaseModificationAgent
-from agents.code_generation_agent import CodeGenerationAgent
+from agents.analysis.analysis.codebasemodification_agent import CodebaseModificationAgent
+from agents.analysis.analysis.code_generation_agent import CodeGenerationAgent
 
 # Initialize agents
 codebase_modification_agent = CodebaseModificationAgent('CodebaseModificationAgent')

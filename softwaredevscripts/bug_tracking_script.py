@@ -1,4 +1,4 @@
-from agents.bugtracking_agent import BugTrackingAgent
+from agents.analysis.analysis.bugtracking_agent import BugTrackingAgent
 
 # Initialize agent
 bug_tracking_agent = BugTrackingAgent('BugTrackingAgent')

@@ -1,4 +1,4 @@
-from agents.integrationtesting_agent import IntegrationTestingAgent
+from agents.analysis.analysis.integrationtesting_agent import IntegrationTestingAgent
 
 project_path = "./path_to_project"
 

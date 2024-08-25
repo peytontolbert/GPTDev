@@ -2,21 +2,23 @@ import openai
 import os
 import json
 import importlib
-from agents.task_decomposition_agent import TaskDecompositionAgent  # Import the new agent
-from agents.knowledge_retrieval_agent import KnowledgeRetrievalAgent  # Import the new agent
-from agents.code_review_agent import CodeReviewAgent  # Import the new agent
-from agents.meta_learning_agent import MetaLearningAgent  # Import the new agent
-from agents.exploration_strategy_agent import ExplorationStrategyAgent  # Import the new agent
-from agents.performance_evaluation_agent import PerformanceEvaluationAgent  # Import the new agent
-from agents.agent_improvement_agent import AgentImprovementAgent  # Import the new agent
-from agents.testing_agent import TestingAgent  # Import the new agent
-from agents.deployment_agent import DeploymentAgent  # Import the new agent
-from agents.strategy_evaluation_agent import StrategyEvaluationAgent  # Import the new agent
-from agents.agent_update_manager_agent import AgentUpdateManager # Import the new agent
-from agents.dependency_management_agent import DependencyManagementAgent # Import the new agent
-from agents.task_manager_agent import TaskManagerAgent # Import the new agent
 
 from agents.base_agent import Agent
+
+from agents.analysis.knowledge_retrieval_agent import KnowledgeRetrievalAgent  # Import the new agent
+from agents.analysis.code_review_agent import CodeReviewAgent  # Import the new agent
+from agents.analysis.meta_learning_agent import MetaLearningAgent  # Import the new agent
+from agents.analysis.exploration_strategy_agent import ExplorationStrategyAgent  # Import the new agent
+from agents.analysis.strategy_evaluation_agent import StrategyEvaluationAgent  # Import the new agent
+from agents.deployment.deployment_agent import DeploymentAgent  # Import the new agent
+from agents.improvement.agent_improvement_agent import AgentImprovementAgent  # Import the new agent
+from agents.integration.dependency_management_agent import DependencyManagementAgent # Import the new agent
+from agents.management.agent_update_manager_agent import AgentUpdateManager # Import the new agent
+from agents.management.task_manager_agent import TaskManagerAgent # Import the new agent
+from agents.performance.performance_evaluation_agent import PerformanceEvaluationAgent  # Import the new agent
+from agents.planning.task_decomposition_agent import TaskDecompositionAgent  # Import the new agent
+from agents.testing.testing_agent import TestingAgent  # Import the new agent
+
 from chat.chat_with_ollama import ChatGPT
 from datetime import datetime
 from typing import List, Dict, Any, Union, Tuple
@@ -69,7 +71,6 @@ class BuilderGPT(Agent):
         self.version_control = AgentVersionControl()
         self.performance_metrics: Dict[str, float] = {}
         self.docker_client = None
-        self.git_repo = git.Repo(self.directory)
 
         #Initialize Agents 
         self.task_decomposition_agent = TaskDecompositionAgent(name="TaskDecompositionAgent")  # Instantiate the agent
@@ -77,13 +78,13 @@ class BuilderGPT(Agent):
         self.code_review_agent = CodeReviewAgent(name="CodeReviewAgent")  # Instantiate the agent
         self.meta_learning_agent = MetaLearningAgent(name="MetaLearningAgent")  # Instantiate the agent
         self.exploration_strategy_agent = ExplorationStrategyAgent(name="ExplorationStrategyAgent")  # Instantiate the agent
-        self.performance_evaluation_agent = PerformanceEvaluationAgent(name="PerformanceEvaluationAgent", prompt=self.prompt)
+        self.performance_evaluation_agent = PerformanceEvaluationAgent(name="PerformanceEvaluationAgent", prompt=prompt)
         self.testing_agent = TestingAgent(name="TestingAgent")
         self.deployment_agent = DeploymentAgent(name="DeploymentAgent", directory=directory)
         self.strategy_evaluation_agent = StrategyEvaluationAgent(name="StrategyEvaluationAgent")
         self.agent_update_manager = AgentUpdateManager(name="AgentUpdateManager", directory=directory, version_control=self.version_control)
         self.dependency_manager_agent = DependencyManagementAgent(name="DependencyManagerAgent")
-        self.agent_improvement_agent = AgentImprovementAgent(self.knowledge_retrieval_agent, self.dependency_manager_agent, self.agent_update_manager, self.directory, self.version_control)
+        self.agent_improvement_agent = AgentImprovementAgent(name="AgentImprovementAgent", knowledge_retrieval_agent=self.knowledge_retrieval_agent, dependency_manager_agent=self.dependency_manager_agent, agent_update_manager=self.agent_update_manager, directory=self.directory, version_control=self.version_control)
 
         # Task Manager Agent
         self.task_manager_agent = TaskManagerAgent(name="TaskManagerAgent", agents={
@@ -131,7 +132,7 @@ class BuilderGPT(Agent):
 
             for suggestion in optimization_suggestions:
                 if suggestion.get('type') == 'decomposition':
-                    new_agents.extend(self.decompose_agent(agent_name, suggestion['details']))
+                    new_agents.extend(self.agent_improvement_agent.decompose_agent(agent_name, suggestion['details']))
                 elif suggestion.get('type') == 'optimization':
                     self.optimize_agent(agent_name, suggestion['details'])
                 elif suggestion.get('type') == 'generalization':
@@ -194,7 +195,8 @@ class BuilderGPT(Agent):
 
     def evaluate_and_improve(self, agents: List[str], results: List[Any]) -> None:
         for agent, result in zip(agents, results):
-            performance_score = self.performance_evaluation_agent.evaluate_performance(agent, result)
+            input_data = {"agent_name": agent, "result": result}
+            performance_score = self.performance_evaluation_agent.execute(input_data)
             self.performance_metrics[agent] = performance_score
 
             if performance_score < 0.7:  # Threshold for improvement

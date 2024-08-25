@@ -1,4 +1,4 @@
-from agents.dependencymanagement_agent import DependencyManagementAgent
+from agents.analysis.analysis.dependencymanagement_agent import DependencyManagementAgent
 
 project_path = "./path_to_project"
 

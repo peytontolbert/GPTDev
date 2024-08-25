@@ -1,4 +1,4 @@
-from agents.unittesting_agent import UnitTestingAgent
+from agents.analysis.analysis.unittesting_agent import UnitTestingAgent
 
 # Initialize agent
 unit_testing_agent = UnitTestingAgent('UnitTestingAgent')

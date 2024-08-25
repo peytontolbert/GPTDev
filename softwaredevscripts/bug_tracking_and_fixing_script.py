@@ -1,6 +1,6 @@
-from agents.bugtracking_agent import BugTrackingAgent
-from agents.codebase_debugging_agent import CodebaseDebuggingAgent
-from agents.code_generation_agent import CodeGenerationAgent
+from agents.analysis.analysis.bugtracking_agent import BugTrackingAgent
+from agents.analysis.analysis.codebase_debugging_agent import CodebaseDebuggingAgent
+from agents.analysis.analysis.code_generation_agent import CodeGenerationAgent
 
 # Initialize agents
 bug_tracking_agent = BugTrackingAgent('BugTrackingAgent')

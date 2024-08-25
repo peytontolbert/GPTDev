@@ -1,4 +1,4 @@
-from agents.testing_agent import TestingAgent
+from agents.analysis.analysis.testing_agent import TestingAgent
 
 project_path = "./path_to_project"
 

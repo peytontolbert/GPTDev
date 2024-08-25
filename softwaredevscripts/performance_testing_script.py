@@ -1,4 +1,4 @@
-from agents.performancetesting_agent import PerformanceTestingAgent
+from agents.analysis.analysis.performancetesting_agent import PerformanceTestingAgent
 
 project_path = "./path_to_project"
 
