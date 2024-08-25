@@ -1,4 +1,4 @@
-from base_agent import Agent
+from agents.base_agent import Agent
 from chat.chat_with_ollama import ChatGPT
 
 class CodeAnalysisAgent(Agent):

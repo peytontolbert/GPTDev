@@ -1,5 +1,4 @@
-from base_agent import Agent
-import os
+from agents.base_agent import Agent
 
 class DocumentationEnhancementAgent(Agent):
     def __init__(self):

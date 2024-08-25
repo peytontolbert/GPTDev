@@ -1,4 +1,5 @@
 import json
+from agents.base_agent import Agent
 class InterAgentCommunicationAgent(Agent):
     def __init__(self, name, shared_data_store):
         super().__init__(name)

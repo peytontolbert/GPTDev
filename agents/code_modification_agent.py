@@ -1,4 +1,4 @@
-from base_agent import Agent
+from agents.base_agent import Agent
 """
 Code Modification Agent: Modifies a given code content based on user prompt
 """

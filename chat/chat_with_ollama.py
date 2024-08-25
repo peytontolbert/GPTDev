@@ -102,7 +102,7 @@ class ChatGPT:
                 else:
                     raise e  # re-raise the last exception if all retries fail
 
-    def chat_with_ollama(system_prompt, prompt, retries=5, delay=5):
+    def chat_with_ollama(self, system_prompt: str, prompt: str, retries: int=5, delay: int=5):
         url = "http://localhost:11434/api/generate"
         payload = {
             "model": "llama3.1",
@@ -111,6 +111,7 @@ class ChatGPT:
             "stream": False,
         }
         headers = {"Content-Type": "application/json"}
+        print(retries)
         for i in range(retries):
             try:
                 response = requests.post(url, json=payload, headers=headers)
@@ -126,7 +127,7 @@ class ChatGPT:
                 else:
                     raise e  # re-raise the last exception if all retries fail
 
-    def chat_with_ollama_nojson(system_prompt, prompt, retries=5, delay=5):
+    def chat_with_ollama_nojson(self, system_prompt: str, prompt: str, retries: int=5, delay: int=5):
         url = "http://localhost:11434/api/generate"
         payload = {
             "model": "llama3.1",

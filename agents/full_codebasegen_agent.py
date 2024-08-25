@@ -7,9 +7,10 @@ import json
 import re
 import ast
 from chat.chat_with_ollama import ChatGPT
-from src.constants import DEFAULT_DIRECTORY, DEFAULT_MODEL, DEFAULT_MAX_TOKENS
-from src.codesearch import get_functions, get_embedding
-from agents.codingagents import (
+from utils.constants import DEFAULT_DIRECTORY, DEFAULT_MODEL, DEFAULT_MAX_TOKENS
+from agents.code_embedding_agent import CodeEmbeddingAgent
+from agents.function_extraction_agent import FunctionExtractionAgent
+from prompts.codingagents import (
     clarifying_agent,
     algorithm_agent,
     coding_agent,
@@ -22,11 +23,11 @@ from utils.file_utils import write_file, get_file_content, get_file_paths
 from glob import glob
 import pathlib
 import pandas as pd
-from src.db import DB, DBs
 import numpy as np
 import traceback
 from dotenv import load_dotenv
 from agents.base_agent import Agent
+from agents.code_embedding_agent import CodeEmbeddingAgent
 # Initialize OpenAI and GitHub API keys
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
@@ -41,7 +42,9 @@ class GenerateCodebaseAgent(Agent):
     def __init__(self, prompt, directory, model=DEFAULT_MODEL):
         self.prompt = prompt
         self.directory = directory
+        self.functions = FunctionExtractionAgent()
         self.gpt = ChatGPT()
+        self.embedding_agent = CodeEmbeddingAgent()
 
     def execute(self, input_data):
         # Implement the main logic here
@@ -192,7 +195,7 @@ class GenerateCodebaseAgent(Agent):
             all_funcs = []
             unit_tests = []
             for code_file in code_files:
-                funcs = list(get_functions(code_file))
+                funcs = list(self.functions.get_functions(code_file))
                 for func in funcs:
                     all_funcs.append(func)
                 code_tokens_string = json.dumps(code_file)
@@ -209,7 +212,7 @@ class GenerateCodebaseAgent(Agent):
             print("Total number of functions:", len(all_funcs))
             df = pd.DataFrame(all_funcs)
             df["code_embedding"] = df["code"].apply(
-                lambda x: get_embedding(x, engine="text-embedding-ada-002")
+                lambda x: self.embedding_agent.get_embedding(x, engine="text-embedding-ada-002")
             )
             df["filepath"] = df["filepath"].apply(lambda x: x.replace(self.directory, ""))
             df.to_csv("functions.csv", index=True)
@@ -613,7 +616,7 @@ class GenerateCodebaseAgent(Agent):
                 all_funcs = json.dumps(all_funcs)
             print("Total number of functions:", len(all_funcs))
             df = pd.DataFrame(all_funcs)
-            df['code_embedding'] = df['code'].apply(lambda x: get_embedding(x, engine="text-embedding-ada-002")) 
+            df['code_embedding'] = df['code'].apply(lambda x: self.embedding_agent.get_embedding(x, engine="text-embedding-ada-002")) 
             df['filepath'] = df['filepath'].apply(lambda x: x.replace(directory, ""))
             df.to_csv("functions.csv", index=True)
             df.head()

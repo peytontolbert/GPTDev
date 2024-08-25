@@ -1,4 +1,4 @@
-from base_agent import Agent
+from agents.base_agent import Agent
 """
 Code Review Agent: Reviews a inputted code to give a solid response for a Software Engineering GPT Agent.
 """

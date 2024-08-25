@@ -1,4 +1,4 @@
-from base_agent import Agent
+from agents.base_agent import Agent
 """
 Continuous Integration Agent: Manages CI/CD pipelines and ensures smooth integration of new code.
 """

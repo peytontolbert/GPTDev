@@ -1,6 +1,4 @@
-from base_agent import Agent
-import subprocess
-import os
+from agents.base_agent import Agent
 
 class DeploymentAgent(Agent):
     def __init__(self):

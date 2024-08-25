@@ -1,4 +1,5 @@
-from base_agent import Agent
+
+from agents.base_agent import Agent
 """
 User Behavior Analysis Agent: Analyzes user behavior to provide insights for improving the software.
 """

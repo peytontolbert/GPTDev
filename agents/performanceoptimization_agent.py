@@ -1,5 +1,5 @@
-from base_agent import Agent
 
+from agents.base_agent import Agent
 """
 Performance Optimization Agent: Analyzes code for performance bottlenecks and suggests optimizations.
 """

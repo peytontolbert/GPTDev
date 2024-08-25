@@ -1,5 +1,5 @@
 from chat.chat_with_ollama import ChatGPT
-from base_agent import Agent
+from agents.base_agent import Agent
 
 class DesignGenerationAgent(Agent):
     def __init__(self, name):

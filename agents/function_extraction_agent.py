@@ -1,5 +1,5 @@
-from base_agent import Agent
-from src.codesearch import get_functions
+from agents.base_agent import Agent
+from utils.code_utils import get_until_no_space, get_function_name
 import os
 from glob import glob
 
@@ -19,7 +19,7 @@ class FunctionExtractionAgent(Agent):
             )
         all_funcs = []
         for code_file in code_files:
-            funcs = list(get_functions(code_file))
+            funcs = list(self.get_functions(code_file))
             for func in funcs:
                 all_funcs.append(func)
         return all_funcs
@@ -28,3 +28,16 @@ class FunctionExtractionAgent(Agent):
         functions = self.extract_functions()
         self.save_to_file('extracted_functions.json', functions)
 
+
+    def get_functions(self, filepath):
+        """
+        Get all functions in a Python file.
+        """
+        with open(filepath, 'r') as file:
+            whole_code = file.read().replace('\r', '\n')
+        all_lines = whole_code.split("\n")
+        for i, l in enumerate(all_lines):
+            if l.startswith("def "):
+                code = get_until_no_space(all_lines, i)
+                function_name = get_function_name(code)
+                yield {"code": code, "function_name": function_name, "filepath": filepath}

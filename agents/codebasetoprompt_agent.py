@@ -3,17 +3,19 @@ import openai
 import json
 from glob import glob
 from typing import List, Dict, Any
-
 from dotenv import load_dotenv
-from openai.embeddings_utils import get_embedding
-
-from utils.utils import (
-    get_file_content,
-    get_function_name,
-    get_until_no_space,
-    num_tokens_from_string,
-    save_embedded_code,
+from utils.code_utils import (
+    get_function_name, 
+    get_until_no_space
+    )
+from utils.token_utils import (
+    num_tokens_from_string
 )
+from utils.file_utils import (
+    get_file_content,
+    save_embedded_code
+)
+from agents.base_agent import Agent
 from chat.chat_with_ollama import ChatGPT
 from agents.documentation_generation_agent import DocumentationGenerationAgent
 from agents.design_generation_agent import DesignGenerationAgent

@@ -1,4 +1,5 @@
-from base_agent import Agent
+
+from agents.base_agent import Agent
 import os
 
 class UserFeedbackIntegrationAgent(Agent):

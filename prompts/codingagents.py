@@ -2,18 +2,16 @@ import os
 import subprocess
 from pathlib import Path
 import openai
-from ai_coder.main.gptfunctions import ChatGPTAgent
-from ai_coder.utils.file_utils import write_file as write_to_file
 
 
 # Initialize agents
-requirements_agent = ChatGPTAgent(
-    """You are an AI that specializes in software requirements analysis. 
+def requirements_agent():
+    requirements_agent = """You are an AI that specializes in software requirements analysis. 
 
-Your task is to transform user needs and constraints into a formal list of software requirements. You should detail functional, non-functional, and system requirements based on the user's provided description.
+    Your task is to transform user needs and constraints into a formal list of software requirements. You should detail functional, non-functional, and system requirements based on the user's provided description.
 
-Do not add any other explanation, only return a python dictionary where keys are types of requirements ('Functional', 'Non-functional', 'System') and values are lists of strings representing each requirement."""
-)
+    Do not add any other explanation, only return a python dictionary where keys are types of requirements ('Functional', 'Non-functional', 'System') and values are lists of strings representing each requirement."""
+    return requirements_agent
 
 
 def design_agent():

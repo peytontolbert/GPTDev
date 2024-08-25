@@ -12,7 +12,7 @@ from agents.documentation_generation_agent import DocumentationGenerationAgent
 from agents.code_integration_agent import CodeIntegrationAgent
 from agents.code_modification_agent import CodeModificationAgent
 from agents.testing_agent import TestingAgent
-
+from agents.base_agent import Agent
 # Load environmental variables and set global constants
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -47,8 +47,7 @@ class CodebaseModificationAgent(Agent):
         self.testing_agent.run_tests(self.directory)
 
     def generate_prompt(self, input_data):
-        # Implement codebase editing logic here
-        pass
+        return f"Modify the codebase in the directory {self.directory} based on the following prompt: {self.prompt}"
 
     def edit_and_test_codebase(self):
         """

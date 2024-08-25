@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from base_agent import Agent
+from agents.base_agent import Agent
 
 class PyTorchModelAgent(Agent):
     def __init__(self, model, criterion, optimizer, name="PyTorch Model Agent"):

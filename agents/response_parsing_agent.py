@@ -1,4 +1,4 @@
-from base_agent import Agent
+from agents.base_agent import Agent
 import json
 
 class ResponseParsingAgent(Agent):

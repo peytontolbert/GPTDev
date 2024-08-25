@@ -1,4 +1,4 @@
-from base_agent import Agent
+from agents.base_agent import Agent
 from agents.prompt_clarification_agent import PromptClarificationAgent
 from agents.documentation_generation_agent import DocumentationGenerationAgent
 from agents.code_modification_agent import CodeModificationAgent

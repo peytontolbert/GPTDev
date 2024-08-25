@@ -1,4 +1,4 @@
-from base_agent import Agent
+from agents.base_agent import Agent
 """
 Code Style Enforcement Agent: Ensures that the code adheres to predefined style guidelines.
 """

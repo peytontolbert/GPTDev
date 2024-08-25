@@ -1,3 +1,5 @@
+from agents.base_agent import Agent
+
 class ErrorHandlingAgent(Agent):
     def __init__(self, name):
         super().__init__(name)
