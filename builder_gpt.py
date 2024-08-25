@@ -2,6 +2,13 @@ import openai
 import os
 import json
 import importlib
+from agents.task_decomposition_agent import TaskDecompositionAgent  # Import the new agent
+from agents.knowledge_retrieval_agent import KnowledgeRetrievalAgent  # Import the new agent
+from agents.code_review_agent import CodeReviewAgent  # Import the new agent
+from agents.meta_learning_agent import MetaLearningAgent  # Import the new agent
+from agents.exploration_strategy_agent import ExplorationStrategyAgent  # Import the new agent
+
+
 from agents.base_agent import Agent
 from chat.chat_with_ollama import ChatGPT
 from datetime import datetime
@@ -77,9 +84,23 @@ class BuilderGPT(Agent):
         self.dependency_graph = AgentDependencyGraph()
         self.version_control = AgentVersionControl()
         self.performance_metrics: Dict[str, float] = {}
-        self.docker_client = docker.from_env()
+        self.docker_client = None
         self.git_repo = git.Repo(self.directory)
 
+        #Initialize Agents 
+        self.task_decomposition_agent = TaskDecompositionAgent(name="TaskDecompositionAgent")  # Instantiate the agent
+        self.knowledge_retrieval_agent = KnowledgeRetrievalAgent(name="KnowledgeRetrievalAgent")  # Instantiate the agent
+        self.code_review_agent = CodeReviewAgent(name="CodeReviewAgent")  # Instantiate the agent
+        self.meta_learning_agent = MetaLearningAgent(name="MetaLearningAgent")  # Instantiate the agent
+        self.exploration_strategy_agent = ExplorationStrategyAgent(name="ExplorationStrategyAgent")  # Instantiate the agent
+
+        # Initialize Docker client if Docker is available
+        try:
+            self.docker_client = docker.from_env()
+            print("Docker client initialized successfully.")
+        except docker.errors.DockerException as e:
+            print(f"Warning: Docker could not be initialized. Error: {e}")
+            self.docker_client = None
 
     def execute(self, input_data):
         requirements = self.process_natural_language_requirements(input_data)
@@ -90,11 +111,11 @@ class BuilderGPT(Agent):
         self.deploy_agents(selected_agents)
         return results
 
-
     def process_natural_language_requirements(self, input_data: str) -> Dict[str, Any]:
+        decomposed_tasks = self.task_decomposition_agent.execute(input_data)  # Decompose tasks
         nlp_prompt = (
-            f"Given the following natural language requirements:\n{input_data}\n\n"
-            "Parse these requirements into a structured format with the following information:\n"
+            f"Given the following decomposed tasks:\n{json.dumps(decomposed_tasks, indent=2)}\n\n"
+            "Parse these tasks into a structured format with the following information:\n"
             "1. Main objectives\n"
             "2. Functional requirements\n"
             "3. Non-functional requirements\n"
@@ -103,8 +124,8 @@ class BuilderGPT(Agent):
             "Provide the output as a JSON object."
         )
         parsed_requirements = self.gpt.chat_with_ollama(nlp_prompt, self.prompt)
+        print(f"processed requirements: {parsed_requirements}")
         return json.loads(parsed_requirements)
-
 
     def recursive_agent_optimization(self, agent_list, depth=0, max_depth=3):
         if depth >= max_depth:
@@ -139,38 +160,57 @@ class BuilderGPT(Agent):
                 agent_code = f.read()
             
             details_prompt = (
+                f"{self.prompt}\n"
                 f"Analyze the following agent code and provide:\n"
                 f"1. A brief summary of its functionality and key methods\n"
-                f"2. A list of other agents or modules it depends on\n\n{agent_code}"
+                f"2. A list of other agents or modules it depends on. Reply in JSON FORMAT\n\n[AGENT CODE]\n"
             )
-            response = self.gpt.chat_with_ollama(details_prompt, self.prompt)
+            print(f"self prompt: {self.prompt}")
+            print(f"agent code: {agent_code}")
+            response = self.gpt.chat_with_ollama(details_prompt, agent_code)
+            print(f"raw response: {response}")
             parsed_response = self.parse_response(response)
+            print(f"parsed response: {parsed_response}")
             self.agent_details[agent_name] = parsed_response['summary']
             dependencies = parsed_response.get('dependencies', [])
 
         return self.agent_details[agent_name], dependencies
 
+
     def analyze_and_optimize_agent(self, agent_name, agent_details):
+        # Retrieve external knowledge
+        external_knowledge = self.knowledge_retrieval_agent.execute(agent_details)
+        strategies = self.exploration_strategy_agent.execute(agent_details)
+        best_strategy = self.select_best_strategy(strategies)
         optimization_prompt = (
-            f"Given the following agent details:\n{agent_details}\n\n"
-            "Suggest optimizations or decompositions for this agent. Consider:\n"
-            "1. Can it be split into smaller, more focused agents?\n"
-            "2. Are there any redundant functionalities that can be removed or combined?\n"
-            "3. Can any of its functions be generalized for broader use?\n"
+            f"Given the following agent details and external knowledge:\n{agent_details}\n{external_knowledge}\n\n"
+            f"Implement the best strategy from the following:\n{best_strategy}\n"
             "Provide specific recommendations in a structured format."
         )
         optimization_suggestions = self.gpt.chat_with_ollama(optimization_prompt, self.prompt)
         return self.parse_response(optimization_suggestions)
-
+    
+    
     def implement_optimization(self, agent_name, optimization_suggestions):
         new_agents = []
-        for suggestion in optimization_suggestions:
-            if suggestion['type'] == 'decomposition':
-                new_agents.extend(self.decompose_agent(agent_name, suggestion['details']))
-            elif suggestion['type'] == 'optimization':
-                self.optimize_agent(agent_name, suggestion['details'])
-            elif suggestion['type'] == 'generalization':
-                new_agents.append(self.generalize_agent(agent_name, suggestion['details']))
+        try:
+            # Ensure optimization_suggestions is a list of dictionaries
+            if isinstance(optimization_suggestions, str):
+                optimization_suggestions = json.loads(optimization_suggestions)
+            
+            if not isinstance(optimization_suggestions, list) or not all(isinstance(suggestion, dict) for suggestion in optimization_suggestions):
+                raise ValueError("Optimization suggestions are not in the expected format.")
+
+            for suggestion in optimization_suggestions:
+                if suggestion.get('type') == 'decomposition':
+                    new_agents.extend(self.decompose_agent(agent_name, suggestion['details']))
+                elif suggestion.get('type') == 'optimization':
+                    self.optimize_agent(agent_name, suggestion['details'])
+                elif suggestion.get('type') == 'generalization':
+                    new_agents.append(self.generalize_agent(agent_name, suggestion['details']))
+        except (json.JSONDecodeError, ValueError) as e:
+            print(f"Error processing optimization suggestions: {e}")
+        
         return new_agents
 
     def decompose_agent(self, agent_name, decomposition_details):
@@ -271,25 +311,57 @@ class BuilderGPT(Agent):
             self.run_tests(agent)
         return results
 
+
     def evaluate_and_improve(self, agents: List[str], results: List[Any]) -> None:
         for agent, result in zip(agents, results):
             performance_score = self.evaluate_performance(agent, result)
             self.performance_metrics[agent] = performance_score
+
             if performance_score < 0.7:  # Threshold for improvement
                 self.improve_agent(agent)
-    
+        
+        # Use meta-learning agent to refine improvement strategies
+        meta_analysis = self.meta_learning_agent.execute(self.performance_metrics)
+        self.adjust_improvement_strategies(meta_analysis)
 
+
+    def select_best_strategy(self, strategies: List[Dict[str, Any]]) -> Dict[str, Any]:
+        best_strategy = None
+        highest_score = -1
+
+        for strategy in strategies:
+            score = self.evaluate_strategy(strategy)
+            if score > highest_score:
+                highest_score = score
+                best_strategy = strategy
+
+        return best_strategy
+
+    def evaluate_strategy(self, strategy: Dict[str, Any]) -> float:
+        # Example scoring function based on criteria like efficiency, feasibility, and impact
+        # This function can be extended to include more sophisticated evaluations
+        score = 0
+        if "efficiency" in strategy:
+            score += strategy["efficiency"] * 0.4  # Weight for efficiency
+        if "feasibility" in strategy:
+            score += strategy["feasibility"] * 0.3  # Weight for feasibility
+        if "impact" in strategy:
+            score += strategy["impact"] * 0.3  # Weight for impact
+
+        return score
 
     def evaluate_performance(self, agent: str, result: Any) -> float:
         evaluation_prompt = (
             f"Evaluate the performance of the following agent:\n{agent}\n\n"
             f"Based on its output:\n{result}\n\n"
-            "Provide a performance score between 0 and 1, where 1 is perfect performance."
+            "Provide a performance score between 0 and 1, where 1 represents perfect performance. "
+            "Consider criteria such as correctness, efficiency, adherence to requirements, and overall quality."
         )
         performance_score = float(self.gpt.chat_with_ollama(evaluation_prompt, self.prompt))
+        self.log(f"Performance score for {agent}: {performance_score}")
         return performance_score
-
     
+
     def improve_agent(self, agent: str) -> None:
         agent_code = self.load_agent_code(f"{agent}.py")
         improvement_prompt = (
