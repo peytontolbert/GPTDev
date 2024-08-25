@@ -2,7 +2,7 @@
 
 from agents.base_agent import Agent
 import json
-from typing import Dict, Any
+from typing import Dict, Any, List
 
 class StrategyEvaluationAgent(Agent):
     def __init__(self, name):
@@ -18,3 +18,15 @@ class StrategyEvaluationAgent(Agent):
             score += strategy["impact"] * 0.3  # Weight for impact
 
         return score
+
+    def select_best_strategy(self, strategies: List[Dict[str, Any]]) -> Dict[str, Any]:
+        best_strategy = None
+        highest_score = -1
+
+        for strategy in strategies:
+            score = self.execute(strategy)
+            if score > highest_score:
+                highest_score = score
+                best_strategy = strategy
+
+        return best_strategy

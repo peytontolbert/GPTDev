@@ -18,8 +18,8 @@ class MetaLearningAgent(Agent):
             "to enhance the effectiveness of the system. Provide the suggestions in a structured format."
         )
 
-    def adjust_improvement_strategies(self, meta_analysis: Dict[str, Any]) -> None:
+    def adjust_improvement_strategies(self, meta_analysis: Dict[str, Any], agent_details) -> None:
         for agent_name, adjustments in meta_analysis.items():
-            if agent_name in self.agent_details:
-                self.agent_details[agent_name]["improvement_strategy"] = adjustments["new_strategy"]
+            if agent_name in agent_details:
+                agent_details[agent_name]["improvement_strategy"] = adjustments["new_strategy"]
                 self.log(f"Adjusted improvement strategy for {agent_name} based on meta-learning feedback.")

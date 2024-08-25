@@ -25,4 +25,10 @@ class DeploymentAgent(Agent):
         self.git_repo.git.add(A=True)
         self.git_repo.index.commit(f"Deploy agent: {agent_name}")
         origin = self.git_repo.remote(name='origin')
-        origin.push()
+        test = self.git_repo.remote(name='test')
+        test.push()
+
+    def build_docker_image(self, agent: str) -> None:
+        dockerfile_content = self.generate_dockerfile(agent)
+        self.save_to_file(f"{self.directory}/Dockerfile", dockerfile_content)
+        self.docker_client.images.build(path=self.directory, tag=f"{agent}:latest")

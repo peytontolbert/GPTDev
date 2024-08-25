@@ -3,8 +3,8 @@ import json
 from agents.base_agent import Agent
 
 class TaskDecompositionAgent(Agent):
-    def __init__(self):
-        super().__init__('TaskDecompositionAgent')
+    def __init__(self, name="TaskDecompositionAgent"):
+        super().__init__(name)
 
     def execute(self, input_data):
         prompt = self.generate_prompt(input_data)

@@ -16,7 +16,6 @@ from agents.agent_update_manager_agent import AgentUpdateManager # Import the ne
 from agents.dependency_management_agent import DependencyManagementAgent # Import the new agent
 from agents.task_manager_agent import TaskManagerAgent # Import the new agent
 
-
 from agents.base_agent import Agent
 from chat.chat_with_ollama import ChatGPT
 from datetime import datetime
@@ -24,28 +23,6 @@ from typing import List, Dict, Any, Union, Tuple
 import unittest
 import git
 import docker
-
-class AgentDependencyGraph:
-    def __init__(self):
-        self.dependencies = {}
-
-    def add_dependency(self, agent, depends_on):
-        if agent not in self.dependencies:
-            self.dependencies[agent] = set()
-        self.dependencies[agent].add(depends_on)
-
-    def remove_agent(self, agent):
-        self.dependencies.pop(agent, None)
-        for deps in self.dependencies.values():
-            deps.discard(agent)
-
-    def get_dependencies(self, agent):
-        return self.dependencies.get(agent, set())
-
-    def save_to_file(self, filename):
-        with open(filename, 'w') as f:
-            for agent, deps in self.dependencies.items():
-                f.write(f"{agent}: {', '.join(deps)}\n")
 
 class AgentVersion:
     def __init__(self, code, version=1, changes="Initial version"):
@@ -89,7 +66,6 @@ class BuilderGPT(Agent):
         self.directory = directory
         self.gpt = ChatGPT()
         self.agent_details = {}
-        self.dependency_graph = AgentDependencyGraph()
         self.version_control = AgentVersionControl()
         self.performance_metrics: Dict[str, float] = {}
         self.docker_client = None
@@ -101,13 +77,13 @@ class BuilderGPT(Agent):
         self.code_review_agent = CodeReviewAgent(name="CodeReviewAgent")  # Instantiate the agent
         self.meta_learning_agent = MetaLearningAgent(name="MetaLearningAgent")  # Instantiate the agent
         self.exploration_strategy_agent = ExplorationStrategyAgent(name="ExplorationStrategyAgent")  # Instantiate the agent
-        self.performance_evaluation_agent = PerformanceEvaluationAgent(name="PerformanceEvaluationAgent")
-        self.agent_improvement_agent = AgentImprovementAgent(name="AgentImprovementAgent")
+        self.performance_evaluation_agent = PerformanceEvaluationAgent(name="PerformanceEvaluationAgent", prompt=self.prompt)
         self.testing_agent = TestingAgent(name="TestingAgent")
         self.deployment_agent = DeploymentAgent(name="DeploymentAgent", directory=directory)
         self.strategy_evaluation_agent = StrategyEvaluationAgent(name="StrategyEvaluationAgent")
         self.agent_update_manager = AgentUpdateManager(name="AgentUpdateManager", directory=directory, version_control=self.version_control)
         self.dependency_manager_agent = DependencyManagementAgent(name="DependencyManagerAgent")
+        self.agent_improvement_agent = AgentImprovementAgent(self.knowledge_retrieval_agent, self.dependency_manager_agent, self.agent_update_manager, self.directory, self.version_control)
 
         # Task Manager Agent
         self.task_manager_agent = TaskManagerAgent(name="TaskManagerAgent", agents={
@@ -121,6 +97,8 @@ class BuilderGPT(Agent):
             'testing': self.testing_agent,
             'deployment': self.deployment_agent,
             'strategy_evaluation': self.strategy_evaluation_agent,
+            'dependency_manager': self.dependency_manager_agent,
+            'agent_update_manager': self.agent_update_manager
         })
 
         # Initialize Docker client if Docker is available
@@ -134,88 +112,12 @@ class BuilderGPT(Agent):
     def execute(self, input_data):
         tasks = ['task_decomposition', 'knowledge_retrieval', 'code_review', 'meta_learning', 'exploration_strategy']
         results = self.task_manager_agent.execute_tasks(tasks, input_data)
-        self.evaluate_and_improve(results.key(), results.values())
+        self.evaluate_and_improve(results.keys(), results.values())
+
+        for agent in results.keys():
+            self.deployment_agent.execute(agent)
         return results
 
-    def process_natural_language_requirements(self, input_data: str) -> Dict[str, Any]:
-        decomposed_tasks = self.task_decomposition_agent.execute(input_data)  # Decompose tasks
-        nlp_prompt = (
-            f"Given the following decomposed tasks:\n{json.dumps(decomposed_tasks, indent=2)}\n\n"
-            "Parse these tasks into a structured format with the following information:\n"
-            "1. Main objectives\n"
-            "2. Functional requirements\n"
-            "3. Non-functional requirements\n"
-            "4. Constraints\n"
-            "5. Acceptance criteria\n"
-            "Provide the output as a JSON object."
-        )
-        parsed_requirements = self.gpt.chat_with_ollama(nlp_prompt, self.prompt)
-        print(f"processed requirements: {parsed_requirements}")
-        return json.loads(parsed_requirements)
-
-    def recursive_agent_optimization(self, agent_list, depth=0, max_depth=3):
-        if depth >= max_depth:
-            return agent_list
-
-        optimized_agents = []
-        for agent in agent_list:
-            if agent.endswith('_agent.py'):
-                agent_name = agent[:-3]  # Remove '.py'
-                agent_details, dependencies = self.get_agent_details(agent_name)
-                optimization_suggestions = self.analyze_and_optimize_agent(agent_name, agent_details)
-                new_agents = self.implement_optimization(agent_name, optimization_suggestions)
-                optimized_agents.extend(new_agents)
-                
-                # Update dependencies
-                for dep in dependencies:
-                    self.dependency_manager_agent.add_dependency(agent_name, dep)
-                
-                # Recursively optimize new agents
-                sub_optimized = self.recursive_agent_optimization(new_agents, depth + 1, max_depth)
-                optimized_agents.extend(sub_optimized)
-            else:
-                optimized_agents.append(agent)
-
-        self.dependency_graph.save_to_file(os.path.join(self.directory, 'dependencies.md'))
-        return list(set(optimized_agents))  # Remove duplicates
-
-    def get_agent_details(self, agent_name):
-        if agent_name not in self.agent_details:
-            agent_file = f"{agent_name}.py"
-            with open(os.path.join(self.directory, agent_file), 'r') as f:
-                agent_code = f.read()
-            
-            details_prompt = (
-                f"{self.prompt}\n"
-                f"Analyze the following agent code and provide:\n"
-                f"1. A brief summary of its functionality and key methods\n"
-                f"2. A list of other agents or modules it depends on. Reply in JSON FORMAT\n\n[AGENT CODE]\n"
-            )
-            print(f"self prompt: {self.prompt}")
-            print(f"agent code: {agent_code}")
-            response = self.gpt.chat_with_ollama(details_prompt, agent_code)
-            print(f"raw response: {response}")
-            parsed_response = self.parse_response(response)
-            print(f"parsed response: {parsed_response}")
-            self.agent_details[agent_name] = parsed_response['summary']
-            dependencies = parsed_response.get('dependencies', [])
-
-        return self.agent_details[agent_name], dependencies
-
-
-    def analyze_and_optimize_agent(self, agent_name, agent_details):
-        # Retrieve external knowledge
-        external_knowledge = self.knowledge_retrieval_agent.execute(agent_details)
-        strategies = self.exploration_strategy_agent.execute(agent_details)
-        best_strategy = self.select_best_strategy(strategies)
-        optimization_prompt = (
-            f"Given the following agent details and external knowledge:\n{agent_details}\n{external_knowledge}\n\n"
-            f"Implement the best strategy from the following:\n{best_strategy}\n"
-            "Provide specific recommendations in a structured format."
-        )
-        optimization_suggestions = self.gpt.chat_with_ollama(optimization_prompt, self.prompt)
-        return self.parse_response(optimization_suggestions)
-    
     
     def implement_optimization(self, agent_name, optimization_suggestions):
         new_agents = []
@@ -238,23 +140,6 @@ class BuilderGPT(Agent):
             print(f"Error processing optimization suggestions: {e}")
         
         return new_agents
-
-    def decompose_agent(self, agent_name, decomposition_details):
-        new_agent_names = []
-        for new_agent in decomposition_details['new_agents']:
-            new_agent_name = f"{new_agent['name']}_agent.py"
-            new_agent_code = self.generate_agent_code(new_agent['name'], new_agent['functionality'])
-            self.save_to_file(os.path.join(self.directory, new_agent_name), new_agent_code)
-            new_agent_names.append(new_agent_name)
-            
-            # Add new version
-            changes = f"Created new agent {new_agent['name']} from decomposition of {agent_name}"
-            self.version_control.add_version(new_agent['name'], new_agent_code, changes)
-        
-        # Update the original agent to use the new decomposed agents
-        self.update_agent_to_use_decomposed(agent_name, decomposition_details['new_agents'])
-        
-        return new_agent_names
 
     def optimize_agent(self, agent_name, optimization_details):
         agent_file = f"{agent_name}.py"
@@ -291,42 +176,6 @@ class BuilderGPT(Agent):
         
         return new_agent_name
 
-    def generate_agent_code(self, agent_name, functionality):
-        code_generation_prompt = f"Generate a Python agent class named {agent_name} with the following functionality:\n{functionality}"
-        generated_code = self.gpt.chat_with_ollama(code_generation_prompt, self.prompt)
-        return generated_code
-
-    def update_agent_to_use_decomposed(self, original_agent_name, new_agents):
-        agent_file = f"{original_agent_name}.py"
-        with open(os.path.join(self.directory, agent_file), 'r') as f:
-            original_code = f.read()
-        
-        update_prompt = (
-            f"Update the following agent code to use these new decomposed agents:\n{new_agents}\n\n"
-            f"Original code:\n{original_code}\n\n"
-            "Ensure the original agent now coordinates these new agents instead of performing the tasks directly."
-        )
-        updated_code = self.gpt.chat_with_ollama(update_prompt, self.prompt)
-        self.save_to_file(os.path.join(self.directory, agent_file), updated_code)
-        
-        # Add new version
-        changes = f"Updated to use new decomposed agents: {', '.join([agent['name'] for agent in new_agents])}"
-        new_version = self.version_control.add_version(original_agent_name, updated_code, changes)
-        
-        # Update CHANGELOG.md
-        changelog = self.version_control.get_changelog(original_agent_name)
-        self.save_to_file(os.path.join(self.directory, f'{original_agent_name}_CHANGELOG.md'), changelog)
-
-    def dynamic_selection(self, agent_list: List[str], requirements: Dict[str, Any]) -> List[str]:
-        selection_prompt = (
-            f"Given the following list of agents:\n{agent_list}\n\n"
-            f"And the following requirements:\n{json.dumps(requirements, indent=2)}\n\n"
-            "Select the most appropriate agents for the current task. "
-            "Consider the agents' functionalities and how they can work together effectively to meet the given requirements."
-        )
-        selected_agents = self.gpt.chat_with_ollama(selection_prompt, self.prompt)
-        return self.parse_response(selected_agents)
-
     def run_selected_agents(self, agents: List[str], requirements: Dict[str, Any]) -> List[Any]:
         results = []
         for agent in agents:
@@ -335,7 +184,7 @@ class BuilderGPT(Agent):
             result = agent_instance.execute(requirements)
             results.append(result)
             # Run tests and handle any failures using TestingAgent
-            agent_code = self.load_agent_code(f"{agent}.py")
+            agent_code = self.agent_improvement_agent.load_agent_code(f"{agent}.py")
             fixed_code = self.testing_agent.execute(agent, agent_code)
             if fixed_code and fixed_code != agent_code:
                 self.save_agent_code(f"{agent}.py", fixed_code)
@@ -343,99 +192,17 @@ class BuilderGPT(Agent):
         
         return results
 
-
     def evaluate_and_improve(self, agents: List[str], results: List[Any]) -> None:
         for agent, result in zip(agents, results):
-            performance_score = self.evaluate_performance(agent, result)
+            performance_score = self.performance_evaluation_agent.evaluate_performance(agent, result)
             self.performance_metrics[agent] = performance_score
 
             if performance_score < 0.7:  # Threshold for improvement
-                self.improve_agent(agent)
+                self.agent_improvement_agent.improve_agent(agent)
         
         # Use meta-learning agent to refine improvement strategies
         meta_analysis = self.meta_learning_agent.execute(self.performance_metrics)
-        self.adjust_improvement_strategies(meta_analysis)
-
-
-    def select_best_strategy(self, strategies: List[Dict[str, Any]]) -> Dict[str, Any]:
-        best_strategy = None
-        highest_score = -1
-
-        for strategy in strategies:
-            score = self.strategy_evaluation_agent.execute(strategy)
-            if score > highest_score:
-                highest_score = score
-                best_strategy = strategy
-
-        return best_strategy
-
-    def evaluate_strategy(self, strategy: Dict[str, Any]) -> float:
-        # Example scoring function based on criteria like efficiency, feasibility, and impact
-        # This function can be extended to include more sophisticated evaluations
-        score = 0
-        if "efficiency" in strategy:
-            score += strategy["efficiency"] * 0.4  # Weight for efficiency
-        if "feasibility" in strategy:
-            score += strategy["feasibility"] * 0.3  # Weight for feasibility
-        if "impact" in strategy:
-            score += strategy["impact"] * 0.3  # Weight for impact
-
-        return score
-
-    def evaluate_performance(self, agent: str, result: Any) -> float:
-        evaluation_prompt = (
-            f"Evaluate the performance of the following agent:\n{agent}\n\n"
-            f"Based on its output:\n{result}\n\n"
-            "Provide a performance score between 0 and 1, where 1 represents perfect performance. "
-            "Consider criteria such as correctness, efficiency, adherence to requirements, and overall quality."
-        )
-        performance_score = float(self.gpt.chat_with_ollama(evaluation_prompt, self.prompt))
-        self.log(f"Performance score for {agent}: {performance_score}")
-        return performance_score
-    
-
-    def improve_agent(self, agent: str) -> None:
-        agent_code = self.load_agent_code(f"{agent}.py")
-        input_data = {"agent": agent, "agent_code": agent_code}
-        improved_code = self.agent_improvement_agent.execute(input_data)
-        self.agent_update_manager.update_agent(agent, improved_code, "Performance improvement")
-
-    def build_docker_image(self, agent: str) -> None:
-        dockerfile_content = self.generate_dockerfile(agent)
-        self.save_to_file(f"{self.directory}/Dockerfile", dockerfile_content)
-        self.docker_client.images.build(path=self.directory, tag=f"{agent}:latest")
-
-    def generate_dockerfile(self, agent: str) -> str:
-        dockerfile_prompt = f"Generate a Dockerfile for the following Python agent:\n{agent}"
-        return self.gpt.chat_with_ollama(dockerfile_prompt, self.prompt)
-
-    def push_to_repository(self, agent: str) -> None:
-        self.git_repo.git.add(A=True)
-        self.git_repo.index.commit(f"Deploy agent: {agent}")
-        origin = self.git_repo.remote(name='origin')
-        origin.push()
-
-
-    def parse_response(self, response):
-        if isinstance(response, str):
-            try:
-                return json.loads(response)
-            except json.JSONDecodeError:
-                return {"raw_response": response}
-        elif isinstance(response, (dict, list)):
-            return response
-        else:
-            print("Unexpected data type received.")
-            return None
-        
+        self.meta_learning_agent.adjust_improvement_strategies(meta_analysis, self.agent_details)
 
     def save_agent_code(self, filename: str, code: str) -> None:
-        self.save_to_file(os.path.join(self.directory, filename), code)
-
-    def load_agent_code(self, filename: str) -> str:
-        with open(os.path.join(self.directory, filename), 'r') as f:
-            return f.read()
-
-    def save_to_file(self, filepath: str, content: str) -> None:
-        with open(filepath, 'w') as f:
-            f.write(content)
+        Agent.save_to_file(os.path.join(self.directory, filename), code)

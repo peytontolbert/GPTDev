@@ -1,61 +1,37 @@
 import os
-from builder_gpt import BuilderGPT
+from builder_gpt import BuilderGPT  # Assuming BuilderGPT is in builder_gpt.py
 
-def main():
-    print("Welcome to BuilderGPT! I will automatically handle any software engineering task you provide.")
+def automated_task_execution(task_description):
+    # Specify the directory where your agents and other resources are located
+    directory = os.path.dirname(os.path.abspath(__file__))
 
-    # Define the directory where agents will be stored
-    agents_directory = "./agents"
-    
-    # Ensure the agents directory exists
-    os.makedirs(agents_directory, exist_ok=True)
-
-    # Initialize BuilderGPT
+    # Initialize BuilderGPT with necessary parameters
     builder_gpt = BuilderGPT(
-        name="AutomatedSoftwareEngineer",
-        prompt="Automatically handle software engineering tasks such as model modification, codebase generation, documentation, etc.",
-        directory=agents_directory
+        name="BuilderGPT",
+        prompt="You are a highly efficient BuilderGPT model designed to autonomously improve and manage software development tasks.",
+        directory=directory
     )
 
-    while True:
-        # Get natural language input from the user
-        input_requirements = input("\nDescribe the software engineering task you want me to perform (or type 'exit' to quit):\n")
-        
-        if input_requirements.lower() == 'exit':
-            print("Exiting BuilderGPT. Goodbye!")
-            break
-
-        # Automatically determine and execute the task
-        builder_gpt.execute_task(input_requirements)
-
-def automated_task_execution(task_description: str, agents_directory: str = "./agents"):
-    """Automates task execution based on natural language description."""
-    
-    # Ensure the agents directory exists
-    os.makedirs(agents_directory, exist_ok=True)
-
-    # Initialize BuilderGPT
-    builder_gpt = BuilderGPT(
-        name="AutomatedSoftwareEngineer",
-        prompt="Automatically handle software engineering tasks such as model modification, codebase generation, documentation, etc.",
-        directory=agents_directory
-    )
-
-    # Run BuilderGPT with the provided task description
+    # Run the full process, including task execution and agent optimization
     results = builder_gpt.execute(task_description)
-
-    # Print out the results
-    print("Task executed successfully. Here are the results:")
+    
+    # Output the results
+    print("Task Execution Results:")
     for result in results:
-        print(f"Agent Result: {result}")
+        print(result)
 
-# Example of full automation without user interaction
+    # Optionally, after execution, run a process to further optimize agents
+    print("\nStarting recursive agent optimization...\n")
+    agent_list = os.listdir(directory)  # Assuming agents are in the same directory
+    optimized_agents = builder_gpt.agent_improvement_agent.recursive_agent_optimization(agent_list)
+    
+    print("Optimized Agents:")
+    for agent in optimized_agents:
+        print(agent)
+
 if __name__ == "__main__":
-    task_description = """
-    1. Modify a PyTorch transformer model architecture to include an additional attention head.
-    2. Generate a codebase for a basic web application in Flask.
-    3. Document the newly generated codebase, including installation instructions and API documentation.
-    4. Update the codebase to include a new feature for user authentication.
-    5. Write unit tests for the user authentication feature.
-    """
-    automated_task_execution(task_description)
+    # Provide a sample task description to the builder
+    sample_task_description = "Build and deploy a scalable web application with a front-end, back-end, database integration, and continuous deployment pipeline."
+
+    # Run the automated task execution
+    automated_task_execution(sample_task_description)
