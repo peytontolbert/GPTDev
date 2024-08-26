@@ -26,3 +26,4 @@ class TaskManagerAgent(Agent):
         )
         selected_agents = self.gpt.chat_with_ollama(selection_prompt, prompt)
         return self.parse_response(selected_agents)
+    

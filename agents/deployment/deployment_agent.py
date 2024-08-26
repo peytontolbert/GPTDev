@@ -18,8 +18,8 @@ class DeploymentAgent(Agent):
         self.push_to_repository(agent_name)
 
     def generate_dockerfile(self, agent_name):
-        dockerfile_prompt = f"Generate a Dockerfile for the following Python agent:\n{agent_name}"
-        return self.gpt.chat_with_ollama(dockerfile_prompt, self.prompt)
+        dockerfile_prompt = f"Generate a Dockerfile for the following Python agent:\n"
+        return self.gpt.chat_with_ollama(dockerfile_prompt, agent_name)
 
     def push_to_repository(self, agent_name):
         self.git_repo.git.add(A=True)

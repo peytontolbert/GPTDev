@@ -11,9 +11,10 @@ class PerformanceEvaluationAgent(Agent):
     def execute(self, input_data):
         prompt = self.generate_prompt(input_data)
         print(f"prompt: {prompt}")
-        performance_score = self.gpt.chat_with_ollama(prompt, self.prompt)
-        selected_score = performance_score['performance_score']
-        return float(selected_score)
+        results = self.gpt.chat_with_ollama(prompt, self.prompt)
+        performance_score = json.loads(results)
+        score = performance_score['performance_score']
+        return float(score)
 
     def generate_prompt(self, input_data):
         agent_name = input_data['agent_name']

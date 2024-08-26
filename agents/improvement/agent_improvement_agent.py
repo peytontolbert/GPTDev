@@ -106,8 +106,13 @@ class AgentImprovementAgent(Agent):
         self.agent_update_manager.update_agent(agent, improved_code, "Performance improvement")
 
     def load_agent_code(self, filename: str) -> str:
-        with open(os.path.join(self.directory, filename), 'r') as f:
-            return f.read()
+        # Adjust path handling to search in subdirectories
+        for root, dirs, files in os.walk(self.directory):
+            if filename in files:
+                file_path = os.path.join(root, filename)
+                with open(file_path, 'r') as f:
+                    return f.read()
+        raise FileNotFoundError(f"Agent file {filename} not found in directory {self.directory}")
 
     def decompose_agent(self, agent_name, decomposition_details):
         new_agent_names = []
@@ -133,12 +138,11 @@ class AgentImprovementAgent(Agent):
 
     def update_agent_to_use_decomposed(self, original_agent_name, new_agents):
         agent_file = f"{original_agent_name}.py"
-        with open(os.path.join(self.directory, agent_file), 'r') as f:
-            original_code = f.read()
+        agent_code = self.load_agent_code(agent_file)
         
         update_prompt = (
             f"Update the following agent code to use these new decomposed agents:\n{new_agents}\n\n"
-            f"Original code:\n{original_code}\n\n"
+            f"Original code:\n{agent_code}\n\n"
             "Ensure the original agent now coordinates these new agents instead of performing the tasks directly."
         )
         updated_code = self.gpt.chat_with_ollama(update_prompt, self.prompt)
