@@ -1,4 +1,4 @@
-from agents.analysis.analysis.unittesting_agent import UnitTestingAgent
+from agents.testing.unit_test_generation_agent import UnitTestingAgent
 
 # Initialize agent
 unit_testing_agent = UnitTestingAgent('UnitTestingAgent')
@@ -6,7 +6,7 @@ unit_testing_agent = UnitTestingAgent('UnitTestingAgent')
 # Define the main function
 def main(project_path):
     # Step 1: Run unit tests
-    unit_testing_agent.run_unit_tests(project_path)
+    unit_testing_agent.execute(project_path)
     
     # Step 2: Generate test report
     unit_testing_agent.generate_test_report()

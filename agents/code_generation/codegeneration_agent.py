@@ -14,6 +14,6 @@ class CodeGenerationAgent(Agent):
 
     def generate_prompt(self, input_data):
         prompt = f"Generate code for the following requirements: {input_data}"
-        response = self.gpt.chat_with_ollama(prompt)
+        response = self.gpt.chat_with_ollama(self.name, prompt)
         return response
 

@@ -69,3 +69,92 @@ agents\security\security_analysis_agent.py
 agents\testing\testing_agent.py
 agents\testing\test_unit_agent.py
 agents\testing\unit_test_generation_agent.py
+
+
+code_analysis_agent.py: Analyzes the codebase to extract meaningful information or identify potential issues.
+code_embedding_agent.py: Converts code into embeddings, likely for machine learning or semantic search purposes.
+code_review_agent.py: Performs automated code reviews to ensure quality and adherence to best practices.
+codebase_debugging_agent.py: Focuses on debugging the entire codebase to identify and fix errors.
+codebasetoprompt_agent.py: Converts codebase features into natural language prompts for further processing.
+codereview_agent.py: Another agent focused on code review, possibly with a different methodology.
+codeunderstanding_agent.py: Helps in understanding the code's logic and structure, possibly for onboarding or documentation.
+dataanalysis_agent.py: Performs data analysis tasks, which could be used for understanding user behavior, performance metrics, etc.
+debugging_execution_agent.py: Executes debugging tasks, potentially running specific test cases or debugging sessions.
+exploration_strategy_agent.py: Explores various strategies for improving or optimizing the code.
+function_extraction_agent.py: Extracts specific functions or features from the codebase for analysis or reuse.
+knowledge_retrieval_agent.py: Retrieves relevant knowledge or documentation from the codebase or related sources.
+meta_learning_agent.py: Implements meta-learning techniques, likely for improving the performance or adaptability of other agents.
+natural_language_requirements_agent.py: Converts natural language requirements into actionable tasks or code.
+ollama_process_user_requirements_agent.py: Processes user requirements using natural language understanding.
+pytorch_model_agent.py: Handles PyTorch models, possibly for training, evaluation, or deployment.
+requirements_gathering_agent.py: Gathers requirements for a project, ensuring that all necessary features and constraints are identified.
+strategy_evaluation_agent.py: Evaluates different strategies for coding, deployment, or other tasks.
+user_behavior_analysis_agent.py: Analyzes user behavior data to improve the software or user experience.
+Bug Tracking Agents:
+bugtracking_agent.py: Tracks bugs across the codebase, likely integrating with issue trackers or generating reports.
+Code Generation Agents:
+code_generation_agent.py: Generates code based on user input or predefined templates.
+codegeneration_agent.py: Similar to the above, it might handle specific code generation tasks.
+codemodularizationagent.py: Modularizes code, breaking it into reusable components.
+full_codebasegen_agent.py: Generates an entire codebase from scratch or based on high-level specifications.
+Communication Agents:
+inter_agent_communication_agent.py: Facilitates communication between different agents in the system.
+ollama_chat_agent.py: Handles chat-based interactions, possibly with the user or between agents.
+prompt_clarification_agent.py: Clarifies prompts to ensure that agents are working with the correct input.
+response_parsing_agent.py: Parses responses from agents or external services.
+user_feedback_agent.py: Collects and processes user feedback to improve the system.
+user_feedback_integration_agent.py: Integrates user feedback into the development or operational process.
+Deployment Agents:
+deployment_agent.py: Manages the deployment of code, likely handling environments, servers, and deployment scripts.
+Design Agents:
+design_agent.py: Focuses on the design aspects of the project, possibly generating design documents or architecture diagrams.
+design_execution_agent.py: Executes design tasks, implementing the design in code or other formats.
+design_generation_agent.py: Automatically generates design plans or architecture based on requirements.
+Documentation Agents:
+codedocumentation_agent.py: Generates documentation directly from the codebase, such as docstrings or API docs.
+documentation_enhancement_agent.py: Enhances existing documentation, possibly by adding examples, clarifications, or visuals.
+documentation_generation_agent.py: Creates new documentation based on code or user input.
+markdown_syntax_highlight_agent.py: Adds syntax highlighting to markdown documents, improving readability.
+Improvement Agents:
+agent_improvement_agent.py: Improves other agents by analyzing their performance and making adjustments.
+bug_fixing_agent.py: Identifies and fixes bugs in the code.
+bug_identification_agent.py: Focuses on identifying bugs, potentially before they are fixed by the bug_fixing_agent.py.
+bug_prioritization_agent.py: Prioritizes bugs based on severity, impact, or other factors.
+code_modification_agent.py: Modifies code to improve it, such as refactoring or adding new features.
+code_refactoring_agent.py: Refactors code to make it cleaner, more efficient, or more maintainable.
+codebase_modification_agent.py: Makes changes across the entire codebase, possibly large-scale refactoring or updates.
+codebasemodification_agent.py: A variant of the above, potentially focusing on different types of modifications.
+codestyleenforcement_agent.py: Enforces coding standards and styles across the codebase.
+error_handling_agent.py: Adds or improves error handling in the code.
+maintenance_agent.py: Performs regular maintenance tasks on the codebase, keeping it up-to-date and functioning smoothly.
+Integration Agents:
+code_integration_agent.py: Integrates different parts of the codebase, ensuring they work together smoothly.
+continuousintegration_agent.py: Manages continuous integration tasks, likely automating testing and deployment.
+dependency_management_agent.py: Manages dependencies in the project, ensuring that all necessary libraries and tools are available.
+Management Agents:
+agent_update_manager_agent.py: Manages updates for agents, ensuring they are running the latest version.
+orchestration_agent.py: Orchestrates tasks across multiple agents, managing the overall workflow.
+task_manager_agent.py: Manages tasks and assigns them to the appropriate agents.
+Miscellaneous Agents:
+agent_search_agent.py: Searches for the appropriate agent to handle a specific task.
+file_create_agent.py: Creates files, possibly based on templates or user input.
+file_edit_agent.py: Edits existing files, making changes as needed.
+Monitoring Agents:
+monitoring_agent.py: Monitors the system or codebase, tracking performance, errors, or other metrics.
+Optimization Agents:
+architecture_optimization.py: Optimizes the architecture of the project, improving performance or scalability.
+Performance Agents:
+performance_evaluation_agent.py: Evaluates the performance of the code or system.
+performance_monitoring_agent.py: Monitors the system's performance over time, tracking changes and trends.
+performance_optimization_agent.py: Optimizes the performance of the code or system.
+Planning Agents:
+project_planning_agent.py: Plans the project, laying out tasks, timelines, and resources.
+task_decomposition_agent.py: Breaks down high-level tasks into smaller, manageable subtasks.
+task_planning_agent.py: Plans tasks based on user input or project requirements.
+Security Agents:
+security_agent.py: Handles security tasks, ensuring the codebase and system are secure.
+security_analysis_agent.py: Analyzes the codebase for security vulnerabilities.
+Testing Agents:
+test_unit_agent.py: Manages unit testing for specific parts of the codebase.
+testing_agent.py: Executes tests and handles test-related tasks.
+unit_test_generation_agent.py: Automatically generates unit tests based on the code.

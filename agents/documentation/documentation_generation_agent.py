@@ -8,7 +8,7 @@ class DocumentationGenerationAgent(Agent):
         self.gpt = ChatGPT()
 
     def generate_documentation(self, prompt):
-        response = self.gpt.chat_with_ollama(prompt)
+        response = self.gpt.chat_with_ollama(self.name, prompt)
         return response
 
     def generate_documentation_from_code(self, code):
