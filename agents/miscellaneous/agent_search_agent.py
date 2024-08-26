@@ -8,6 +8,10 @@ class AgentSearchAgent(Agent):
         super().__init__(name)
         self.directory = directory
 
+    def execute(self, agent):
+        agent = self.search_agents(agent)
+        return agent
+
     def perform_task(self, search_criteria):
         """
         Searches for agents that match the given criteria.

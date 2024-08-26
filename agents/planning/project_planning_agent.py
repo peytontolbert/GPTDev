@@ -16,6 +16,9 @@ class ProjectPlanningAgent:
         self.gpt = ChatGPT()
         self.name = name
 
+    def execute(self, input_data):
+        project_plan = self.create_project_plan(input_data)
+        return project_plan
     def clarify_prompt(self):
         while True:
             clarifying_prompt = (

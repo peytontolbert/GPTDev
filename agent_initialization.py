@@ -23,11 +23,10 @@ class AgentInitialization:
         self.meta_learning_agent = MetaLearningAgent(name="MetaLearningAgent")
         self.exploration_strategy_agent = ExplorationStrategyAgent(name="ExplorationStrategyAgent")
         self.performance_evaluation_agent = PerformanceEvaluationAgent(name="PerformanceEvaluationAgent", prompt=prompt)
-        self.orchestration_agent = OrchestrationAgent(name="OrchestrationAgent")
         self.testing_agent = TestingAgent(name="TestingAgent")
         self.deployment_agent = DeploymentAgent(name="DeploymentAgent", directory=directory)
         self.strategy_evaluation_agent = StrategyEvaluationAgent(name="StrategyEvaluationAgent")
         self.agent_update_manager = AgentUpdateManager(name="AgentUpdateManager", directory=directory, version_control=version_control)
         self.dependency_manager_agent = DependencyManagementAgent(name="DependencyManagerAgent")
-        self.agent_improvement_agent = AgentImprovementAgent(name="AgentImprovementAgent", knowledge_retrieval_agent=knowledge_retrieval_agent)
-
+        self.agent_improvement_agent = AgentImprovementAgent(name="AgentImprovementAgent", knowledge_retrieval_agent=knowledge_retrieval_agent, dependency_manager_agent=self.dependency_manager_agent, agent_update_manager=self.agent_update_manager, directory=directory, version_control=version_control)
+        self.orchestration_agent = OrchestrationAgent('OrchestrationAgent', {})

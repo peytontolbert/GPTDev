@@ -35,7 +35,7 @@ class AgentImprovementAgent(Agent):
         improvement_prompt = (
             f"The following agent has underperformed:\n{agent_name}\n\n"
             f"Current implementation:\n{agent_code}\n\n"
-            "Suggest improvements to enhance its performance."
+            "Suggest improved_code to enhance its performance."
         )
         improved_code = self.gpt.chat_with_ollama(system_prompt, improvement_prompt)
         return improved_code
@@ -100,8 +100,9 @@ class AgentImprovementAgent(Agent):
         return new_agents
     
     def improve_agent(self, agent: str) -> None:
-        agent_code = self.load_agent_code(f"{agent}.py")
-        input_data = {"agent": agent, "agent_code": agent_code}
+        print(f"improving agent: {agent}")
+        agent_code = self.load_agent_code(f"{agent}_agent.py")
+        input_data = {"agent_name": agent, "agent_code": agent_code}
         improved_code = self.execute(input_data)
         self.agent_update_manager.update_agent(agent, improved_code, "Performance improvement")
 
@@ -137,7 +138,7 @@ class AgentImprovementAgent(Agent):
         return generated_code
 
     def update_agent_to_use_decomposed(self, original_agent_name, new_agents):
-        agent_file = f"{original_agent_name}.py"
+        agent_file = f"{original_agent_name}_agent.py"
         agent_code = self.load_agent_code(agent_file)
         
         update_prompt = (

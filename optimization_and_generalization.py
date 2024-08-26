@@ -8,6 +8,7 @@ class OptimizationAndGeneralization:
         self.gpt = gpt
         self.version_control = version_control
 
+
     def optimize_agent(self, agent_name, optimization_details):
         agent_file = f"{agent_name}.py"
         with open(os.path.join(self.directory, agent_file), 'r') as f:

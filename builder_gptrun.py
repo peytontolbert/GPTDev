@@ -31,7 +31,7 @@ def automated_task_execution(task_description):
 
 if __name__ == "__main__":
     # Provide a sample task description to the builder
-    sample_task_description = "Build and deploy a scalable web application with a front-end, back-end, database integration, and continuous deployment pipeline."
+    sample_task_description = {"initial_task": "Improve software agents"}
 
     # Run the automated task execution
     automated_task_execution(sample_task_description)

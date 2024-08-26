@@ -7,6 +7,9 @@ class DependencyManagementAgent(Agent):
         super().__init__(name)
         self.dependencies = {}
 
+    def execute():
+        pass
+
     def perform_task(self, input_data):
         dependencies = self.parse_dependencies(input_data)
         self.install_dependencies(dependencies)

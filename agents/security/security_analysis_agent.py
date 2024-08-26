@@ -7,7 +7,7 @@ class SecurityAnalysisAgent(Agent):
     def __init__(self):
         super().__init__()
 
-    def perform_task(self, input_data):
+    def execute(self, input_data):
         vulnerabilities = self.scan_for_vulnerabilities(input_data)
         self.report_vulnerabilities(vulnerabilities)
 

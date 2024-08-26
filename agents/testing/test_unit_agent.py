@@ -13,9 +13,9 @@ class TestUnitAgent:
         self.directory = directory
         self.gpt = ChatGPT()
 
-    def perform_task(self, input_data):
-        # Implement test unit logic here
-        pass
+    def execute(self, input_data):
+        test_cases = self.create_test_cases(input_data)
+        return test_cases
 
     def generate_prompt(self, input_data):
         # Implement test unit logic here

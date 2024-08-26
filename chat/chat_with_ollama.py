@@ -111,7 +111,8 @@ class ChatGPT:
             "stream": False,
         }
         headers = {"Content-Type": "application/json"}
-        print(retries)
+        print(system_prompt)
+        print(prompt)
         for i in range(retries):
             try:
                 response = requests.post(url, json=payload, headers=headers)

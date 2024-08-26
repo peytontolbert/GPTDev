@@ -8,7 +8,7 @@ class PerformanceOptimizationAgent(Agent):
     def __init__(self):
         super().__init__()
 
-    def perform_task(self, input_data):
+    def execute(self, input_data):
         # Implement logic here
         pass
 
